@@ -3,6 +3,7 @@ import RegisterPage from '~/features/auth/pages/register-page';
 import LoginPage from '~/features/auth/pages/login-page';
 import CalendarPage from '~/features/calendar/pages/calendar-page';
 import HomePage from '~/pages/home-page';
+import PasswordRecoveryPage from "~/features/auth/pages/password-recovery-page";
 
 const routes = [
   {
@@ -19,6 +20,11 @@ const routes = [
   {
     path: '/sign-up',
     component: RegisterPage,
+    protected: false
+  },
+  {
+    path: '/password-recovery',
+    component: PasswordRecoveryPage,
     protected: false
   },
   {
