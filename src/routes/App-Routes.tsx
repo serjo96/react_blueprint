@@ -1,6 +1,5 @@
-// AppRoutes.tsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Navigate, Route } from 'react-router-dom';
+import { Routes, Navigate, Route } from 'react-router-dom';
 import routes from './routes';
 import { useAuth } from '~/features/auth/cotext/useAuth';
 import ErrorBoundary from '~/components/ErrorBoundary';
@@ -10,7 +9,7 @@ const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <Router>
+    <>
       <ErrorBoundary fallback={<ErrorPage />}>
         <Routes>
           {routes.map((route, index) => {
@@ -23,11 +22,11 @@ const AppRoutes = () => {
                 />
               );
             }
-            return <Route key={index} path={route.path} element={route.component()} />;
+            return <Route key={index} path={route.path} element={route.component()} />
           })}
         </Routes>
       </ErrorBoundary>
-    </Router>
+    </>
   );
 };
 
