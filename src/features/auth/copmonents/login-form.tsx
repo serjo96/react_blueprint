@@ -1,6 +1,8 @@
 import React, { SyntheticEvent, useState } from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import {Box, Button, Checkbox, FormControlLabel, Grid, TextField} from "@mui/material";
+
 import { useAuth } from '~/features/auth/cotext/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const { login } = useAuth();
@@ -11,9 +13,7 @@ const LoginForm = () => {
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     try {
-      // Используем значения состояния name и password
       await login({ name, password });
-      // Обработка ответа от login
       navigate('/calendar')
     } catch (error) {
 
@@ -29,21 +29,57 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
+
+    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="email"
+        label="Email Address"
+        name="email"
+        autoComplete="email"
+        autoFocus
         value={name}
         onChange={handleNameChange}
-        placeholder="Username"
       />
-      <input
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        name="password"
+        label="Password"
         type="password"
+        id="password"
+        autoComplete="current-password"
         value={password}
         onChange={handlePasswordChange}
-        placeholder="Password"
       />
-      <button type="submit">Login</button>
-    </form>
+      <FormControlLabel
+        control={<Checkbox value="remember" color="primary" />}
+        label="Remember me"
+      />
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+      >
+        Sign In
+      </Button>
+      <Grid container>
+        <Grid item xs>
+          <Link to={'/password-recovery'}>
+            Forgot password?
+          </Link>
+        </Grid>
+        <Grid item>
+          <Link to={'/sign-up'}>
+            {"Don't have an account? Sign Up"}
+          </Link>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
