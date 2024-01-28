@@ -17,6 +17,7 @@ const Header = () => {
         </Typography>
         <Box display="flex" alignItems="center">
           <Switch
+            sx={{marginRight: '15px'}}
             color="default"
             checked={mode === 'dark'}
             onChange={toggleTheme}
@@ -24,7 +25,7 @@ const Header = () => {
             checkedIcon={<Brightness4Icon />}
           />
           <Link to={'login'}>
-            <Button variant="outlined" color="inherit">
+            <Button sx={{color: 'white'}} variant="outlined" color="inherit">
               Login
             </Button>
           </Link>
