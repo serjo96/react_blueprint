@@ -4,6 +4,7 @@ import LoginPage from '~/features/auth/pages/login-page';
 import CalendarPage from '~/features/calendar/pages/calendar-page';
 import HomePage from '~/pages/home-page';
 import PasswordRecoveryPage from "~/features/auth/pages/password-recovery-page";
+import NotFoundPage from "~/features/auth/pages/not-found-page";
 
 const routes = [
   {
@@ -37,7 +38,11 @@ const routes = [
     component: CalendarPage,
     protected: true
   },
-  // Другие маршруты
+  {
+    path: '*',
+    component: NotFoundPage,
+    protected: false
+  }
 ];
 
 export default routes;
