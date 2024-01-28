@@ -12,8 +12,13 @@ const routes = [
     protected: false
   },
   {
-    path: '/login',
+    path: '/sign-in',
     component: LoginPage,
+    protected: false
+  },
+  {
+    path: '/sign-up',
+    component: RegisterPage,
     protected: false
   },
   {

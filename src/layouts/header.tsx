@@ -13,7 +13,7 @@ const Header = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
-            My app logo
+           <Link to={'/'}>My app logo</Link>
         </Typography>
         <Box display="flex" alignItems="center">
           <Switch
@@ -24,7 +24,7 @@ const Header = () => {
             icon={< Brightness7Icon/>}
             checkedIcon={<Brightness4Icon />}
           />
-          <Link to={'login'}>
+          <Link to={'sign-in'}>
             <Button sx={{color: 'white'}} variant="outlined" color="inherit">
               Login
             </Button>
