@@ -12,6 +12,9 @@ const HomePage = () => {
           🚀 React Template Project
         </Typography>
         <Typography variant="body1" paragraph>
+          This project serves as a template for quickly bootstrapping React applications that require basic state management with the potential for scaling up to more comprehensive state management solutions in the future. It includes essential features such as user authentication and registration, laying the groundwork for building both simple and complex web applications efficiently.
+        </Typography>
+        <Typography variant="body1" paragraph>
           Jumpstart your React applications with this ready-to-use template, featuring:
         </Typography>
         <List>
