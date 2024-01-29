@@ -18,7 +18,7 @@ const AppRoutes = () => {
                 <Route
                   key={index}
                   path={route.path}
-                  element={<Navigate to="/login" />}
+                  element={<Navigate to="/sign-in" />}
                 />
               );
             }
