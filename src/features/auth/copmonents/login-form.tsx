@@ -1,31 +1,53 @@
-import React, { SyntheticEvent, useState } from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {Box, Button, Checkbox, FormControlLabel, Grid, TextField} from "@mui/material";
+import React, { useState } from 'react';
+import {Link as RouterLink, useNavigate} from 'react-router-dom';
+import {Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField} from "@mui/material";
 
 import { useAuth } from '~/features/auth/cotext/useAuth';
+import {loginValidationSchema} from "~/features/auth/validation/auth-validation";
+import Joi from "joi";
 
+type FormErrorsState ={
+  email: string;
+  password: string;
+  rememberMe: boolean;
+  [key: string]: string | boolean;
+}
 const LoginForm = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [name, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    rememberMe: false
+  });
+  const [errors, setErrors] = useState<Partial<FormErrorsState>>({});
 
-  const handleSubmit = async (event: SyntheticEvent) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await login({ name, password });
-      navigate('/calendar')
+      const value = await loginValidationSchema.validateAsync(formData, { abortEarly: false });
+      await login(value);
+      navigate('/calendar');
     } catch (error) {
-
+      if (error instanceof Joi.ValidationError) {
+        const errorMessages = error.details.reduce((acc, detail) => {
+          const key = detail.path[0] as keyof FormErrorsState;
+          acc[key] = detail.message;
+          return acc;
+        }, {} as FormErrorsState);
+        setErrors(errorMessages);
+      } else {
+        // Here you can handle errors from the API
+      }
     }
   };
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
-  };
-
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked, type } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
   };
 
   return (
@@ -40,8 +62,10 @@ const LoginForm = () => {
         name="email"
         autoComplete="email"
         autoFocus
-        value={name}
-        onChange={handleNameChange}
+        value={formData.email}
+        onChange={handleChange}
+        error={!!errors.email}
+        helperText={errors.email}
       />
       <TextField
         margin="normal"
@@ -52,11 +76,13 @@ const LoginForm = () => {
         type="password"
         id="password"
         autoComplete="current-password"
-        value={password}
-        onChange={handlePasswordChange}
+        value={formData.password}
+        onChange={handleChange}
+        error={Boolean(errors.password)}
+        helperText={errors.password || ''}
       />
       <FormControlLabel
-        control={<Checkbox value="remember" color="primary" />}
+        control={<Checkbox value="remember" color="primary" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} />}
         label="Remember me"
       />
       <Button
@@ -69,13 +95,13 @@ const LoginForm = () => {
       </Button>
       <Grid container>
         <Grid item xs>
-          <Link to={'/password-recovery'}>
+          <Link component={RouterLink} to={'/password-recovery'}>
             Forgot password?
           </Link>
         </Grid>
         <Grid item>
-          <Link to={'/sign-up'}>
-            {"Don't have an account? Sign Up"}
+          <Link component={RouterLink} to={'/sign-up'}>
+            Don't have an account? Sign Up
           </Link>
         </Grid>
       </Grid>

@@ -2,8 +2,9 @@ import initApiClient from '~/services/api/initClient';
 import { ErrorHandler } from '~/services/ErrorHandler';
 
 export type LoginPayload = {
-  name: string;
-  password: string
+  email: string;
+  password: string;
+  rememberMe?: boolean
 };
 
 export type RegistrationPayload = {
