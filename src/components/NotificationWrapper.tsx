@@ -1,7 +1,6 @@
-import React, {ReactNode, SyntheticEvent, useEffect, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import {Alert, Snackbar} from '@mui/material';
 import {eventEmitter} from "~/utils/eventEmitter";
-import {SnackbarCloseReason} from "@mui/material/Snackbar/Snackbar";
 
 export enum NotificationStatus {
   SUCCESS = 'success',
@@ -36,7 +35,7 @@ const NotificationWrapper = ({ children }: {children: ReactNode}) => {
     };
   }, []);
 
-  const handleClose = (event: SyntheticEvent, reason: SnackbarCloseReason) => {
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: string)  => {
     if (reason === 'clickaway') {
       return;
     }
@@ -46,8 +45,13 @@ const NotificationWrapper = ({ children }: {children: ReactNode}) => {
   return (
     <>
       {children}
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert severity={notification.type || "info"} sx={{ width: '100%' }}>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        sx={{cursor: 'pointer'}}
+      >
+        <Alert onClick={handleClose} severity={notification.type || "info"} sx={{ width: '100%' }}>
           {notification.message}
         </Alert>
       </Snackbar>
