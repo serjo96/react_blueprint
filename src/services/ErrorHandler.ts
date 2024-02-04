@@ -8,7 +8,7 @@ export class ErrorHandler {
   }
 
   static showErrorToUser(message?: string,) {
-    eventEmitter.emit('notification', { message: message || 'An error has occurred', type: NotificationStatus.INFO });
+    eventEmitter.emit('notification', { message: message || 'An error has occurred', type: NotificationStatus.ERROR });
   }
 
   static handle(error: {message: string}) {
