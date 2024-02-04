@@ -1,15 +1,18 @@
+import {eventEmitter} from "~/utils/eventEmitter";
+import {NotificationStatus} from "~/components/NotificationWrapper";
+
 export class ErrorHandler {
   static logError(error: unknown) {
     console.error(error);
-    // Здесь может быть интеграция с внешним логгером, например, Sentry
+    // Here may to add logging like e.g Sentry
   }
 
-  static showErrorToUser(message: string) {
-    // Отображение ошибки пользователю, например, с помощью toast-уведомлений
+  static showErrorToUser(message?: string,) {
+    eventEmitter.emit('notification', { message: message || 'An error has occurred', type: NotificationStatus.INFO });
   }
 
-  static handle(error: unknown) {
+  static handle(error: {message: string}) {
     this.logError(error);
-    this.showErrorToUser("Произошла ошибка. Пожалуйста, попробуйте еще раз.");
+    this.showErrorToUser(error?.message);
   }
 }
