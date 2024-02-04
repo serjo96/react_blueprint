@@ -1,8 +1,8 @@
 import React, { Component, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
-  children: ReactNode; // Тип ReactNode для дочерних элементов
-  fallback?: ReactNode; // Опциональный запасной UI
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface ErrorBoundaryState {
@@ -19,12 +19,12 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Логика обработки ошибки (например, логирование)
+    console.error(error, errorInfo)
   }
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback || <h1>Что-то пошло не так.</h1>;
+      return this.props.fallback || <h1>Something going wrong.</h1>;
     }
 
     return this.props.children;
