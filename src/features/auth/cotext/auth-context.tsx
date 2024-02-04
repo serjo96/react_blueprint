@@ -1,10 +1,8 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import AuthAPI, { LoginPayload, RegistrationPayload } from '~/features/auth/AuthAPI';
 import initApiClient from '~/services/api/initClient';
 
-// types.ts
 export interface AuthContextType {
   user: unknown;
   isAuthenticated: boolean;
@@ -41,7 +39,6 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       localStorage.setItem(Tokens.ACCESS_TOKEN, newTokens.accessToken);
       localStorage.setItem(Tokens.REFRESH_TOKEN, newTokens.refreshToken);
     } catch (error) {
-      // Обработка ошибки обновления токена
       logout();
     }
   };
@@ -67,8 +64,6 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
   const register = async (regPayload: RegistrationPayload) => {
     const {user, token} = await AuthAPI.register(regPayload);
-    // Логика регистрации
-    // Обычно это запрос к серверу, который затем может автоматически войти в систему пользователя
     localStorage.setItem(Tokens.ACCESS_TOKEN, token.accessToken);
     localStorage.setItem(Tokens.REFRESH_TOKEN, token.refreshToken);
     setAccessToken(token.accessToken);
