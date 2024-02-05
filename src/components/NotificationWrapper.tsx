@@ -1,6 +1,6 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import {Alert, Snackbar} from '@mui/material';
-import {eventEmitter} from "~/utils/eventEmitter";
+import {eventEmitter, EventName} from "~/utils/eventEmitter";
 
 export enum NotificationStatus {
   SUCCESS = 'success',
@@ -27,7 +27,7 @@ const NotificationWrapper = ({ children }: {children: ReactNode}) => {
     };
 
     // Subscribe to the notification event
-    const unsubscribe = eventEmitter.subscribe('notification', showNotification);
+    const unsubscribe = eventEmitter.subscribe(EventName.NOTIFICATION, showNotification);
 
     return () => {
       // Unsubscribe from the event when the component is unmounted

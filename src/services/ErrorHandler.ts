@@ -1,4 +1,4 @@
-import {eventEmitter} from "~/utils/eventEmitter";
+import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/NotificationWrapper";
 
 export class ErrorHandler {
@@ -8,7 +8,7 @@ export class ErrorHandler {
   }
 
   static showErrorToUser(message?: string,) {
-    eventEmitter.emit('notification', { message: message || 'An error has occurred', type: NotificationStatus.ERROR });
+    eventEmitter.emit(EventName.NOTIFICATION, { message: message || 'An error has occurred', type: NotificationStatus.ERROR });
   }
 
   static handle(error: {message: string}) {

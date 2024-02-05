@@ -4,7 +4,7 @@ type EventMap = Map<string, EventHandler[]>;
 class EventEmitter {
   private events: EventMap = new Map();
 
-  subscribe(eventName: string, fn: EventHandler): () => void {
+  subscribe(eventName: EventName, fn: EventHandler): () => void {
     const handlers = this.events.get(eventName) || [];
     this.events.set(eventName, [...handlers, fn]);
 
@@ -14,9 +14,7 @@ class EventEmitter {
     };
   }
 
-  emit(eventName: string, ...args: any[]): void {
-    console.log(eventName);
-    console.log(args);
+  emit(eventName: EventName, ...args: any[]): void {
     const handlers = this.events.get(eventName) || [];
     handlers.forEach((fn) => {
       fn(...args);
@@ -25,3 +23,9 @@ class EventEmitter {
 }
 
 export const eventEmitter = new EventEmitter();
+
+// Add your events
+export enum EventName {
+  NOTIFICATION = 'notification'
+}
+

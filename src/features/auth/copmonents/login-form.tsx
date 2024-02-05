@@ -6,7 +6,7 @@ import {Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField} from "@m
 import { useAuth } from '~/features/auth/cotext/useAuth';
 import {loginValidationSchema} from "~/features/auth/validation/auth-validation";
 
-type FormErrorsState ={
+type FormErrorsState = {
   email: string;
   password: string;
   rememberMe: boolean;

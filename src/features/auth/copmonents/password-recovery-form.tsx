@@ -4,7 +4,7 @@ import Joi from "joi";
 
 import {resetPasswordValidationSchema} from "~/features/auth/validation/auth-validation";
 import AuthAPI from "~/features/auth/AuthAPI";
-import {eventEmitter} from "~/utils/eventEmitter";
+import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/NotificationWrapper";
 
 const PasswordRecoveryForm = () => {
@@ -20,7 +20,7 @@ const PasswordRecoveryForm = () => {
       await AuthAPI.resetPassword(email);
 
       eventEmitter.emit(
-        'notification',
+        EventName.NOTIFICATION,
         {
           message: 'The email with recovery instruction was sent successfully. Check your email.',
           type: NotificationStatus.SUCCESS

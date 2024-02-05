@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 import { useAuth } from '~/features/auth/cotext/useAuth';
 import {registrationValidationSchema} from "~/features/auth/validation/auth-validation";
 import Joi from "joi";
-import {eventEmitter} from "~/utils/eventEmitter";
+import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/NotificationWrapper";
 
 type FormErrorsState = {
@@ -35,8 +35,9 @@ const RegistrationForm = () => {
       const value = await registrationValidationSchema.validateAsync(formData, { abortEarly: false });
       setErrors({});
       await register(value);
+
       eventEmitter.emit(
-        'notification',
+        EventName.NOTIFICATION,
         {
           message: 'The email with confirm registration was sent on your mail.',
           type: NotificationStatus.SUCCESS
