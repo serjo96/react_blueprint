@@ -4,37 +4,66 @@ import React, { SyntheticEvent, useState } from 'react';
 import {Link} from "react-router-dom";
 
 import { useAuth } from '~/features/auth/cotext/useAuth';
-import registerSchema from '~/features/auth/copmonents/validtionRegister';
+import {registrationValidationSchema} from "~/features/auth/validation/auth-validation";
+import Joi from "joi";
+import {eventEmitter} from "~/utils/eventEmitter";
+import {NotificationStatus} from "~/components/NotificationWrapper";
+
+type FormErrorsState = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  [key: string]: string | boolean;
+}
 
 const RegistrationForm = () => {
   const { register } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
     password: '',
-    repeatPassword: '',
+    confirmPassword: '',
     email: ''
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Partial<FormErrorsState>>({});
 
  /* const handleChange = (event: SyntheticEvent) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };*/
 
-  const handleSubmit = (event: SyntheticEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    const { error } = registerSchema.validate(formData, { abortEarly: false });
-
-    if (error) {
-      const errorMessages: {[key: string]: string} = {};
-      error.details.forEach(detail => {
-        errorMessages[detail.path[0]] = detail.message;
-      });
-      setErrors(errorMessages);
-      return;
+    try {
+      const value = await registrationValidationSchema.validateAsync(formData, { abortEarly: false });
+      setErrors({});
+      await register(value);
+      eventEmitter.emit(
+        'notification',
+        {
+          message: 'The email with confirm registration was sent on your mail.',
+          type: NotificationStatus.SUCCESS
+        });
+      // navigate('/calendar');
+    } catch (error) {
+      if (error instanceof Joi.ValidationError) {
+        const errorMessages = error.details.reduce((acc, detail) => {
+          const key = detail.path[0] as keyof FormErrorsState;
+          acc[key] = detail.message;
+          return acc;
+        }, {} as FormErrorsState);
+        setErrors(errorMessages);
+      } else {
+        // Here you can handle errors from the API
+      }
     }
-
-    // register(userData);
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
 
   return (
 
@@ -42,40 +71,48 @@ const RegistrationForm = () => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
+                margin="normal"
                 required
                 fullWidth
                 id="email"
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                autoFocus
+                value={formData.email}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
+                margin="normal"
                 required
                 fullWidth
                 name="password"
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="new-password"
+                value={formData.password}
+                onChange={handleChange}
+                error={Boolean(errors.password)}
+                helperText={errors.password || ''}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
+                margin="normal"
                 required
                 fullWidth
-                name="repeatPassword"
-                label="Repeat Password"
+                name="confirmPassword"
+                label="Confirm password"
                 type="password"
-                id="repeat-password"
-                autoComplete="repeat-password"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
+                id="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                error={Boolean(errors.confirmPassword)}
+                helperText={errors.confirmPassword || ''}
               />
             </Grid>
           </Grid>
