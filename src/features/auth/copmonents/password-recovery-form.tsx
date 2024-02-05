@@ -1,12 +1,37 @@
 import React, {SyntheticEvent, useState} from 'react';
 import { TextField, Button, Box } from '@mui/material';
+import Joi from "joi";
+
+import {resetPasswordValidationSchema} from "~/features/auth/validation/auth-validation";
+import AuthAPI from "~/features/auth/AuthAPI";
+import {eventEmitter} from "~/utils/eventEmitter";
+import {NotificationStatus} from "~/components/NotificationWrapper";
 
 const PasswordRecoveryForm = () => {
   const [email, setEmail] = useState('');
+  const [emailError, setErrors] = useState<string>('');
 
-  const handleSubmit = (event: SyntheticEvent) => {
+
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    console.log(email);
+    try {
+      await resetPasswordValidationSchema.validateAsync(email, { abortEarly: false });
+      setErrors('')
+      await AuthAPI.resetPassword(email);
+
+      eventEmitter.emit(
+        'notification',
+        {
+          message: 'The email with recovery instruction was sent successfully. Check your email.',
+          type: NotificationStatus.SUCCESS
+        });
+    } catch (error) {
+      if (error instanceof Joi.ValidationError) {
+        setErrors(error.message);
+      } else {
+        // Here you can handle errors from the API
+      }
+    }
   };
 
   return (
@@ -16,12 +41,14 @@ const PasswordRecoveryForm = () => {
         required
         fullWidth
         id="email"
-        label="Email address"
+        label="Email Address"
         name="email"
         autoComplete="email"
         autoFocus
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        error={!!emailError}
+        helperText={emailError}
       />
       <Button
         type="submit"

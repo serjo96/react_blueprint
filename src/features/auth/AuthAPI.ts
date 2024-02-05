@@ -43,5 +43,13 @@ export default {
     } catch (error) {
       ErrorHandler.handle(error);
     }
-  }
+  },
+  resetPassword: (email: string)=> {
+    try {
+      return httpClient.get(`auth/forgot-password/${email}`);
+    } catch (error) {
+      ErrorHandler.handle(error);
+    }
+  },
+
 }
