@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {Link as RouterLink, useNavigate} from 'react-router-dom';
+import Joi from "joi";
 import {Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField} from "@mui/material";
 
 import { useAuth } from '~/features/auth/cotext/useAuth';
 import {loginValidationSchema} from "~/features/auth/validation/auth-validation";
-import Joi from "joi";
 
 type FormErrorsState ={
   email: string;
