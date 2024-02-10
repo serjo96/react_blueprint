@@ -5,6 +5,7 @@ import CalendarPage from '~/features/calendar/pages/calendar-page';
 import HomePage from '~/pages/home-page';
 import PasswordRecoveryPage from "~/features/auth/pages/password-recovery-page";
 import NotFoundPage from "~/features/auth/pages/not-found-page";
+import ProfilePage from "~/features/profile/pages/profile-page";
 
 const routes = [
   {
@@ -32,6 +33,11 @@ const routes = [
     path: '/register',
     component: RegisterPage,
     protected: false
+  },
+  {
+    path: '/profile',
+    component: ProfilePage,
+    protected: true
   },
   {
     path: '/calendar',
