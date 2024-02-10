@@ -5,6 +5,7 @@ import Joi from "joi";
 import {ProfileValidationSchema} from "~/features/profile/validation/profile-validation";
 import ProfileApi from "~/features/profile/ProfileApi";
 import {useAuth} from "~/features/auth/cotext/useAuth";
+import {useLoading} from "~/context/LoadingContext";
 
 type FormErrorsState = {
   email: string;
@@ -21,21 +22,23 @@ const ProfileForm = () => {
     password: '',
   });
   const {user} = useAuth()
+  const { setLoading } = useLoading();
 
-  useEffect(() => {
+  useEffect( () => {
     const fetchUserProfile = async () => {
       if (user.id) {
         try {
+          setLoading(true);
           const data = await ProfileApi.getUserProfile(user.id);
           setUserData({
             ...userData,
             ...data
           })
         } finally {
-          // setIsLoading(false);
+          setLoading(false);
         }
       } else {
-        // setIsLoading(false);
+        setLoading(false);
       }
     };
 
