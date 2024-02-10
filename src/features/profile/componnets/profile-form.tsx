@@ -22,23 +22,23 @@ const ProfileForm = () => {
     password: '',
   });
   const {user} = useAuth()
-  const { setLoading } = useLoading();
+  const { startLoading,stopLoading } = useLoading();
 
   useEffect( () => {
+    startLoading();
     const fetchUserProfile = async () => {
       if (user.id) {
         try {
-          setLoading(true);
           const data = await ProfileApi.getUserProfile(user.id);
           setUserData({
             ...userData,
             ...data
           })
         } finally {
-          setLoading(false);
+          stopLoading()
         }
       } else {
-        setLoading(false);
+        stopLoading()
       }
     };
 
