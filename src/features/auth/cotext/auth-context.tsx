@@ -2,9 +2,12 @@ import React, { createContext, useEffect, useState } from 'react';
 
 import AuthAPI, { LoginPayload, RegistrationPayload } from '~/features/auth/AuthAPI';
 import initApiClient from '~/services/api/initClient';
+import {getUserData} from "~/utils/localStorageUtils";
+
+//TODO add type for user
 
 export interface AuthContextType {
-  user: unknown;
+  user?: {id: string};
   isAuthenticated: boolean;
   login: (payloadData: LoginPayload) => Promise<void>;
   logout: () => void;
@@ -22,7 +25,7 @@ export const AuthContext = createContext<AuthContextType>(null);
 
 export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
   // const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(getUserData);
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem(Tokens.ACCESS_TOKEN));
   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem(Tokens.REFRESH_TOKEN));
 
@@ -47,6 +50,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
     localStorage.setItem(Tokens.ACCESS_TOKEN, token.accessToken);
     localStorage.setItem(Tokens.REFRESH_TOKEN, token.refreshToken);
+    localStorage.setItem('user', JSON.stringify(user));
     setAccessToken(token.accessToken);
     setRefreshToken(token.refreshToken);
     setUser(user);
@@ -56,6 +60,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
   const logout = () => {
     localStorage.removeItem(Tokens.ACCESS_TOKEN);
     localStorage.removeItem(Tokens.REFRESH_TOKEN);
+    localStorage.setItem('user', JSON.stringify(user));
     setAccessToken(null);
     setRefreshToken(null);
     setUser(null);
@@ -66,6 +71,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
     const {user, token} = await AuthAPI.register(regPayload);
     localStorage.setItem(Tokens.ACCESS_TOKEN, token.accessToken);
     localStorage.setItem(Tokens.REFRESH_TOKEN, token.refreshToken);
+    localStorage.setItem('userId', user.id);
     setAccessToken(token.accessToken);
     setRefreshToken(token.refreshToken);
     setUser(user);

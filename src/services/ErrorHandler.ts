@@ -7,7 +7,7 @@ export class ErrorHandler {
     // Here may to add logging like e.g Sentry
   }
 
-  static showErrorToUser(message?: string,) {
+  static showErrorToUser(message?: string) {
     eventEmitter.emit(EventName.NOTIFICATION, { message: message || 'An error has occurred', type: NotificationStatus.ERROR });
   }
 
