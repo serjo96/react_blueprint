@@ -1,17 +1,29 @@
-import React, {createContext, ReactNode, useContext, useState} from 'react';
+import React, {createContext, ReactNode, useCallback, useContext, useState} from 'react';
+interface LoadingContextState {
+  isLoading: boolean;
+  startLoading: () => void;
+  stopLoading: () => void;
+}
 
-// Создание контекста
-const LoadingContext = createContext({
+const LoadingContext = createContext<LoadingContextState>({
   isLoading: false,
-  startLoading: () => {},
-  stopLoading: () => {},
+  startLoading: () => {
+    throw new Error('startLoading function not implemented');
+  },
+  stopLoading: () => {
+    throw new Error('stopLoading function not implemented');
+  },
 });
 
-// Провайдер контекста
 export const LoadingProvider = ({ children }: {children: ReactNode;}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const startLoading = () => setIsLoading(true);
-  const stopLoading = () => setIsLoading(false);
+  const startLoading = useCallback(() => {
+    setIsLoading(true);
+  }, []);
+
+  const stopLoading = useCallback(() => {
+    setIsLoading(false);
+  }, []);
 
   return (
     <LoadingContext.Provider value={{ isLoading, stopLoading, startLoading }}>
@@ -20,5 +32,4 @@ export const LoadingProvider = ({ children }: {children: ReactNode;}) => {
   );
 };
 
-// Хук для использования контекста
 export const useLoading = () => useContext(LoadingContext);

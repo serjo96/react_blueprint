@@ -24,7 +24,8 @@ const ProfileForm = () => {
   const {user} = useAuth()
   const { startLoading,stopLoading } = useLoading();
 
-  useEffect( () => {
+  useEffect(
+    () => {
     startLoading();
     const fetchUserProfile = async () => {
       if (user.id) {
