@@ -37,7 +37,8 @@ export default class ApiClient {
 
     constructor (url: string, options: ApiRequestOptions) {
       this.headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       };
       if (isAbsolutePath(url)) {
         this.url = url;
@@ -97,7 +98,7 @@ export default class ApiClient {
       }
     }
 
-    setHeaders (headers: HeadersInit, override = true) {
+    setHeaders (headers: HeadersInit, override?: boolean) {
       const keep = override ? {} : this.headers;
       this.headers = { ...keep, ...headers };
       return this;
