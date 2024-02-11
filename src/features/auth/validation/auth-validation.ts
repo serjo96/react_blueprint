@@ -7,7 +7,8 @@ export const loginValidationSchema = Joi.object({
 
 export const registrationValidationSchema = Joi.object({
   email: Joi.string().email({ tlds: { allow: false } }).required().label('Email'),
-  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).label('Password'),
+  // harder password validation password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).label('Password'),
+  password: Joi.string().min(6).required().label('Password'),
   confirmPassword: Joi.any().equal(Joi.ref('password')).required().label('Confirm password').messages({ 'any.only': '{{#label}} does not match' }),
 });
 
