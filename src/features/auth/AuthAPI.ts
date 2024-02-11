@@ -28,7 +28,7 @@ export default {
   },
   register: async (data: RegistrationPayload)=> {
     try {
-      const response: any = await httpClient.post('auth/registration', JSON.stringify(data));
+      const response: any = await httpClient.post('auth/sign-up', JSON.stringify(data));
       return {
         user: response.data.user,
         token: response.data.token
