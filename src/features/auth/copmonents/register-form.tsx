@@ -1,5 +1,4 @@
-import {Avatar, Box, Button, Checkbox, FormControlLabel, Grid, TextField, Typography} from "@mui/material";
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import {Box, Button, Grid, TextField} from "@mui/material";
 import React, { SyntheticEvent, useState } from 'react';
 import {Link} from "react-router-dom";
 
@@ -32,9 +31,9 @@ const RegistrationForm = () => {
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     try {
-      const value = await registrationValidationSchema.validateAsync(formData, { abortEarly: false });
+      const {confirmPassword, ...values}: FormErrorsState = await registrationValidationSchema.validateAsync(formData, { abortEarly: false });
       setErrors({});
-      await register(value);
+      await register(values);
 
       eventEmitter.emit(
         EventName.NOTIFICATION,
