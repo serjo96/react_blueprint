@@ -16,7 +16,7 @@ export interface ClientResponse<T> {
 
 type queryParams = { [key: string]: string | number | null | boolean | Array<string | number | null | boolean> | void}
 
-export class ResponseError extends Error {
+export class ResponseError<E = any> extends Error {
     code: number;
     response: Response;
     constructor (resp: Response) {
@@ -70,17 +70,17 @@ export default class ApiClient {
       return q;
     }
 
-    private async _checkResponseStatus<R> (response: Response): Promise<ClientResponse<R>> {
+    private async _checkResponseStatus<R, E> (response: Response): Promise<ClientResponse<R>> {
       if (response.status >= 200 && response.status < 400) {
         const data = await response.text();
         const parsedResponse: R = JSON.parse(data);
         return { isSuccessRequest: response.status >= 200 && response.status < 400, status: response.status, data: parsedResponse };
       } else {
-        throw new ResponseError(response);
+        throw new ResponseError<E>(response);
       }
     }
 
-    private async _fetch<R> (method: string, path?: string, body?: BodyInit | null, query?: queryParams): Promise<ClientResponse<R>> {
+    private async _fetch<R, E = any> (method: string, path?: string, body?: BodyInit | null, query?: queryParams): Promise<ClientResponse<R>> {
       const apiPath = new URL(path, this.url);
       const token = localStorage.getItem(Tokens.ACCESS_TOKEN);
       if (token) {
@@ -89,7 +89,7 @@ export default class ApiClient {
       try {
         return fetch(apiPath + this._buildQueryParams(query),
           { ...this.options, method: method, headers: this.headers, body: body })
-          .then(resp => this._checkResponseStatus<R>(resp));
+          .then(resp => this._checkResponseStatus<R, E>(resp));
       } catch (error) {
         if (error instanceof ResponseError && error.code === 403) {
           await this.refreshAccessToken();
@@ -98,58 +98,58 @@ export default class ApiClient {
       }
     }
 
-    setHeaders (headers: HeadersInit, override?: boolean) {
+    public setHeaders (headers: HeadersInit, override?: boolean) {
       const keep = override ? {} : this.headers;
       this.headers = { ...keep, ...headers };
       return this;
     }
 
-    setQueryParams (queryParams: {[key: string]: string}, override = true) {
+    public setQueryParams (queryParams: {[key: string]: string}, override = true) {
       const keep = override ? {} : this.queryParams;
       this.queryParams = { ...keep, ...queryParams };
       return this;
     }
 
-    setOptions (options: RequestInit) {
+    public setOptions (options: RequestInit) {
       this.options = options;
       return this;
     }
 
-    head (path?: string) {
+    public head<R, E>(path?: string) {
       const fullUrl = path ? this.url + path : this.url;
-      return this._fetch('HEAD', fullUrl);
+      return this._fetch<R, E>('HEAD', fullUrl);
     }
 
-    get<T> (path?: string, query?: queryParams): Promise<ClientResponse<T>> {
+    public get<R, E>(path?: string, query?: queryParams) {
       const fullUrl = path ? this.url + path : this.url;
-      return this._fetch('GET', fullUrl, null, query);
+      return this._fetch<R, E>('GET', fullUrl, null, query);
     }
 
-    post (path?: string, body?: BodyInit | null) {
+    public post<R, E>(path?: string, body?: BodyInit | null) {
       const fullUrl = path ? this.url + path : this.url;
-      return this._fetch('POST', fullUrl, body);
+      return this._fetch<R, E>('POST', fullUrl, body);
     }
 
-    put (path?: string, body?: BodyInit | null) {
+    public put<R, E>(path?: string, body?: BodyInit | null) {
       const fullUrl = path ? this.url + path : this.url;
-      return this._fetch('PUT', fullUrl, body);
+      return this._fetch<R, E>('PUT', fullUrl, body);
     }
 
-    patch (path?: string, body?: BodyInit | null) {
+    public patch<R, E>(path?: string, body?: BodyInit | null) {
       const fullUrl = path ? this.url + path : this.url;
-      return this._fetch('PATCH', fullUrl, body);
+      return this._fetch<R, E>('PATCH', fullUrl, body);
     }
 
-    delete (path?: string, body?: BodyInit | null) {
+    public delete<R, E>(path?: string, body?: BodyInit | null) {
       const fullUrl = path ? this.url + path : this.url;
-      return this._fetch('DELETE', fullUrl, body);
+      return this._fetch<R, E>('DELETE', fullUrl, body);
     }
 
-    all<T> (requests: Array<ClientResponse<T> | Promise<ClientResponse<T>>>): Promise<ClientResponse<T>[]> {
+    public all<T> (requests: Array<ClientResponse<T> | Promise<ClientResponse<T>>>): Promise<ClientResponse<T>[]> {
       return Promise.all<ClientResponse<T>>(requests);
     }
 
-    spread<T, R> (callback: (...args: T[]) => R): (array: T[]) => R {
+    public spread<T, R> (callback: (...args: T[]) => R): (array: T[]) => R {
       return function wrap (arr) {
         // eslint-disable-next-line prefer-spread
         return callback.apply(null, arr);

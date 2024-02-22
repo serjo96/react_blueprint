@@ -6,6 +6,7 @@ import HomePage from '~/pages/home-page';
 import PasswordRecoveryPage from "~/features/auth/pages/password-recovery-page";
 import NotFoundPage from "~/features/auth/pages/not-found-page";
 import ProfilePage from "~/features/profile/pages/profile-page";
+import ResendConfirmation from "~/pages/resend-confirmation";
 
 const routes = [
   {
@@ -27,6 +28,11 @@ const routes = [
   {
     path: '/password-recovery',
     component: PasswordRecoveryPage,
+    protected: false
+  },
+  {
+    path: '/resend-conformation',
+    component: ResendConfirmation,
     protected: false
   },
   {

@@ -12,6 +12,13 @@ export type RegistrationPayload = {
   password: string
 }
 
+type TokenValidationErrorResponse = {
+  message: string;
+  payload?: {
+    unlockTime?: number
+  }
+}
+
 const httpClient = initApiClient
 
 export default {
@@ -46,10 +53,29 @@ export default {
   },
   resetPassword: (email: string)=> {
     try {
-      return httpClient.get(`auth/forgot-password/${email}`);
+      return httpClient.get<string, TokenValidationErrorResponse>(`auth/forgot-password/${email}`);
     } catch (error) {
+      if(error.payload?.unlockTime) {
+        return {
+          message: error.message,
+          unlockTime: error.payload.unlockTime
+        }
+      }
       ErrorHandler.handle(error);
     }
   },
+  resendConfirmationToken(email: string) {
+    try {
+      return httpClient.get(`auth/resend-verification/${email}`);
+    } catch (error) {
+      if(error.payload?.unlockTime) {
+        return {
+          message: error.message,
+          unlockTime: error.payload.unlockTime
+        }
+      }
+      ErrorHandler.handle(error);
+    }
+  }
 
 }
