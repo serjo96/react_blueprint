@@ -7,7 +7,7 @@ import {getUserData} from "~/utils/localStorageUtils";
 //TODO add type for user
 
 export interface AuthContextType {
-  user?: {id: string};
+  user?: {id: string, email: string};
   isAuthenticated: boolean;
   login: (payloadData: LoginPayload) => Promise<void>;
   logout: () => void;
