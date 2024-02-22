@@ -33,12 +33,12 @@ const Header = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
            <Link to={'/'}>My app logo</Link>
         </Typography>
         <Box display="flex" alignItems="center">
           <Switch
-            sx={{marginRight: '15px'}}
+            sx={{ mr: 2 }}
             color="default"
             checked={mode === 'dark'}
             onChange={toggleTheme}
