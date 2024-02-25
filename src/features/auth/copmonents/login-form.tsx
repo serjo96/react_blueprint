@@ -1,33 +1,45 @@
 import React, { useState } from 'react';
-import {Link as RouterLink, useNavigate} from 'react-router-dom';
+import {Link as RouterLink} from 'react-router-dom';
 import Joi from "joi";
 import {Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField} from "@mui/material";
 
-import { useAuth } from '~/features/auth/cotext/useAuth';
 import {loginValidationSchema} from "~/features/auth/validation/auth-validation";
 
-type FormErrorsState = {
+export type LoginFormMainFields = {
   email: string;
   password: string;
   rememberMe: boolean;
-  [key: string]: string | boolean;
 }
-const LoginForm = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+
+type FormErrorsState = {
+  [key: string]: string | boolean;
+} & LoginFormMainFields;
+
+type LoginFormProps = {
+  onSubmit: (params: FormErrorsState) => void;
+  errors?: {
+    email?: string;
+    password?: string;
+  }
+}
+
+const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
+  const [formData, setFormData] = useState<LoginFormMainFields>({
     email: '',
     password: '',
-    rememberMe: false
+    rememberMe: false,
   });
-  const [errors, setErrors] = useState<Partial<FormErrorsState>>({});
+  const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
+
+
+  // Combine validation errors and API errors for display
+  const errorsFields = { ...validationErrors, ...errors };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const value = await loginValidationSchema.validateAsync(formData, { abortEarly: false });
-      await login(value);
-      navigate('/calendar');
+      const value: FormErrorsState = await loginValidationSchema.validateAsync(formData, { abortEarly: false });
+      onSubmit(value)
     } catch (error) {
       if (error instanceof Joi.ValidationError) {
         const errorMessages = error.details.reduce((acc, detail) => {
@@ -35,7 +47,7 @@ const LoginForm = () => {
           acc[key] = detail.message;
           return acc;
         }, {} as FormErrorsState);
-        setErrors(errorMessages);
+        setValidationErrors(errorMessages);
       } else {
         // Here you can handle errors from the API
       }
@@ -64,8 +76,8 @@ const LoginForm = () => {
         autoFocus
         value={formData.email}
         onChange={handleChange}
-        error={!!errors.email}
-        helperText={errors.email}
+        error={!!errorsFields.email}
+        helperText={errorsFields.email}
       />
       <TextField
         margin="normal"
@@ -78,11 +90,19 @@ const LoginForm = () => {
         autoComplete="current-password"
         value={formData.password}
         onChange={handleChange}
-        error={Boolean(errors.password)}
-        helperText={errors.password || ''}
+        error={Boolean(errorsFields.password)}
+        helperText={errorsFields.password || ''}
       />
       <FormControlLabel
-        control={<Checkbox value="remember" color="primary" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} />}
+        control={
+          <Checkbox
+            value="remember"
+            color="primary"
+            name="rememberMe"
+            checked={formData.rememberMe}
+            onChange={handleChange}
+          />
+        }
         label="Remember me"
       />
       <Button
