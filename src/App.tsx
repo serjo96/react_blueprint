@@ -13,14 +13,14 @@ const App = () => {
     <NotificationWrapper>
       <LoadingProvider>
         <TopProgressBar />
-            <AuthProvider>
-              <Header />
-              <Container maxWidth="sm">
-                <Box sx={{ my: 4 }}>
-                    <AppRoutes />
-                </Box>
-              </Container>
-            </AuthProvider>
+        <AuthProvider>
+          <Header />
+          <Container maxWidth="sm">
+            <Box sx={{ my: 4 }}>
+              <AppRoutes />
+            </Box>
+          </Container>
+        </AuthProvider>
       </LoadingProvider>
     </NotificationWrapper>
   );

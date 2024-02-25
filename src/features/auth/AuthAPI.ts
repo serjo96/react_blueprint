@@ -22,9 +22,20 @@ type TokenValidationErrorResponse = {
 const httpClient = initApiClient
 
 export default {
-  loginUser: async (data: LoginPayload) => {
+  login: async (data: LoginPayload) => {
     try {
       const response: any = await httpClient.post('auth/login', JSON.stringify(data));
+      return {
+        user: response.data.user,
+        token: response.data.token
+      };
+    } catch (error) {
+      ErrorHandler.handle(error);
+    }
+  },
+  loginWithToken: async (tempToken: string) => {
+    try {
+      const response: any = await httpClient.post(`api/token-login?tempToken=${tempToken}`);
       return {
         user: response.data.user,
         token: response.data.token

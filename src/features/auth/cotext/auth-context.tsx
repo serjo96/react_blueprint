@@ -11,6 +11,7 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   login: (payloadData: LoginPayload) => Promise<void>;
   logout: () => void;
+  loginWithToken: (token: string) => Promise<void>;
   refreshAccessToken: () => Promise<void>;
   register: (regPayload: RegistrationPayload) => void;
 }
@@ -46,16 +47,37 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
     }
   };
   const login = async (loginPayload: LoginPayload) => {
-    const {user, token} = await AuthAPI.loginUser(loginPayload);
+    const {user, token} = await AuthAPI.login(loginPayload);
 
-    localStorage.setItem(Tokens.ACCESS_TOKEN, token.accessToken);
-    localStorage.setItem(Tokens.REFRESH_TOKEN, token.refreshToken);
-    localStorage.setItem('user', JSON.stringify(user));
+    localSaveAuthData(user, token)
     setAccessToken(token.accessToken);
     setRefreshToken(token.refreshToken);
     setUser(user);
-    // navigate('/calendar')
   };
+
+  const loginWithToken = async (tempToken: string) => {
+    const {user, token} = await AuthAPI.loginWithToken(tempToken);
+
+    localSaveAuthData(user, token)
+    setAccessToken(token.accessToken);
+    setRefreshToken(token.refreshToken);
+    setUser(user);
+  }
+
+  const register = async (regPayload: RegistrationPayload) => {
+    const {user, token} = await AuthAPI.register(regPayload);
+
+    localSaveAuthData(user, token)
+    setAccessToken(token.accessToken);
+    setRefreshToken(token.refreshToken);
+    setUser(user);
+  };
+
+  const localSaveAuthData = (user: any, tokens: any) => {
+    localStorage.setItem(Tokens.ACCESS_TOKEN, tokens.accessToken);
+    localStorage.setItem(Tokens.REFRESH_TOKEN, tokens.refreshToken);
+    localStorage.setItem('user', JSON.stringify(user));
+  }
 
   const logout = () => {
     localStorage.removeItem(Tokens.ACCESS_TOKEN);
@@ -67,16 +89,6 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
     // navigate('/login');
   };
 
-  const register = async (regPayload: RegistrationPayload) => {
-    const {user, token} = await AuthAPI.register(regPayload);
-    localStorage.setItem(Tokens.ACCESS_TOKEN, token.accessToken);
-    localStorage.setItem(Tokens.REFRESH_TOKEN, token.refreshToken);
-    localStorage.setItem('userId', user.id);
-    setAccessToken(token.accessToken);
-    setRefreshToken(token.refreshToken);
-    setUser(user);
-    // navigate('/calendar')
-  };
 
   const contextValue = {
     user,
@@ -84,6 +96,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
     login,
     register,
     refreshAccessToken,
+    loginWithToken,
     logout
   };
 
