@@ -1,5 +1,5 @@
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
-import {NotificationStatus} from "~/components/NotificationWrapper";
+import {NotificationStatus} from "~/components/notification-wrapper";
 
 export class ErrorHandler {
   static logError(error: unknown) {

@@ -1,12 +1,11 @@
-// routes.js
 import RegisterPage from '~/features/auth/pages/register-page';
 import LoginPage from '~/features/auth/pages/login-page';
 import CalendarPage from '~/features/calendar/pages/calendar-page';
 import HomePage from '~/pages/home-page';
 import PasswordRecoveryPage from "~/features/auth/pages/password-recovery-page";
-import NotFoundPage from "~/features/auth/pages/not-found-page";
 import ProfilePage from "~/features/profile/pages/profile-page";
 import ResendConfirmation from "~/pages/resend-confirmation";
+import NotFoundPage from "~/pages/not-found-page";
 
 const routes = [
   {

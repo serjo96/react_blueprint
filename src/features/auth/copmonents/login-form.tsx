@@ -32,11 +32,13 @@ const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
   const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
 
   // Combine validation errors and API errors for display
-  const errorsFields = { ...validationErrors, ...errors };
+  let errorsFields = { ...validationErrors, ...errors };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
+      setValidationErrors({})
+      errorsFields = null
       const value: FormErrorsState = await loginValidationSchema.validateAsync(formData, { abortEarly: false });
       onSubmit(value)
     } catch (error) {

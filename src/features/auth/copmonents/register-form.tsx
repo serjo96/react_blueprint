@@ -31,11 +31,13 @@ const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
   });
   const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
   // Combine validation errors and API errors for display
-  const errorsFields = { ...validationErrors, ...errors };
+  let errorsFields = { ...validationErrors, ...errors };
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     try {
+      setValidationErrors({})
+      errorsFields = null
       const {confirmPassword, ...values}: FormErrorsState = await registrationValidationSchema.validateAsync(formData, { abortEarly: false });
       onSubmit(values)
     } catch (error) {

@@ -14,19 +14,21 @@ const LoginPage = () => {
   const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
-    // Функция для парсинга query параметров URL
+    // Function for Parsing Query URL parameters
     const searchParams = new URLSearchParams(location.search);
     const tempToken = searchParams.get('token');
 
-    // If there is a temporary token in the URL, we try to authorize the user    if (tempToken) {
-    startLoading();
-    loginWithToken(tempToken)
-      .then(() => {
-          navigate('/protected-page');
-        })
-      .finally(() => {
-        stopLoading();
-      });
+    if(tempToken) {
+      // If there is a temporary token in the URL, we try to authorize the user    if (tempToken) {
+      startLoading();
+      loginWithToken(tempToken)
+        .then(() => {
+            navigate('/protected-page');
+          })
+        .finally(() => {
+          stopLoading();
+        });
+    }
 
   }, [location.search, navigate]);
 

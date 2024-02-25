@@ -43,7 +43,7 @@ const NotificationWrapper = ({ children }: {children: ReactNode}) => {
   };
 
   return (
-    <>
+    <React.Fragment>
       {children}
       <Snackbar
         open={open}
@@ -55,7 +55,7 @@ const NotificationWrapper = ({ children }: {children: ReactNode}) => {
           {notification.message}
         </Alert>
       </Snackbar>
-    </>
+    </React.Fragment>
   );
 };
 

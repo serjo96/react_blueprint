@@ -4,7 +4,7 @@ import {Avatar, Box, Typography} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
-import {NotificationStatus} from "~/components/NotificationWrapper";
+import {NotificationStatus} from "~/components/notification-wrapper";
 import {useLoading} from "~/context/LoadingContext";
 import {useAuth} from "~/features/auth/cotext/useAuth";
 

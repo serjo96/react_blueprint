@@ -5,7 +5,7 @@ import {Link as RouterLink} from 'react-router-dom';
 import {useAuth} from "~/features/auth/cotext/useAuth";
 import AuthAPI from "~/features/auth/AuthAPI";
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
-import {NotificationStatus} from "~/components/NotificationWrapper";
+import {NotificationStatus} from "~/components/notification-wrapper";
 
 
 const ResendConfirmation = () => {
@@ -86,7 +86,7 @@ const ResendConfirmation = () => {
         <Button
           variant="contained"
           onClick={handleResendToken}
-          disabled={!email}
+          disabled={!email || timer}
         >
           Send again
         </Button>

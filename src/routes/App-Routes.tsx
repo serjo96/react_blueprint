@@ -2,14 +2,14 @@ import React from 'react';
 import { Routes, Navigate, Route } from 'react-router-dom';
 import routes from './routes';
 import { useAuth } from '~/features/auth/cotext/useAuth';
-import ErrorBoundary from '~/components/ErrorBoundary';
+import ErrorBoundary from '~/components/error-boundary';
 import ErrorPage from '~/pages/error-page';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <>
+    <React.Fragment>
       <ErrorBoundary fallback={<ErrorPage />}>
         <Routes>
           {routes.map((route, index) => {
@@ -26,7 +26,7 @@ const AppRoutes = () => {
           })}
         </Routes>
       </ErrorBoundary>
-    </>
+    </React.Fragment>
   );
 };
 
