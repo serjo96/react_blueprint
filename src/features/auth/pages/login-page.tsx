@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useNavigate} from "react-router-dom";
 import {Avatar, Box, Typography} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 import LoginForm, {LoginFormMainFields} from '~/features/auth/copmonents/login-form';
 import {useAuth} from "~/features/auth/cotext/useAuth";
-import {loginValidationSchema} from "~/features/auth/validation/auth-validation";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -13,8 +12,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (formData: LoginFormMainFields) => {
     try {
-      const value = await loginValidationSchema.validateAsync(formData, { abortEarly: false });
-      await login(value);
+      await login(formData);
       navigate('/calendar');
     } catch (error) {
         // Here you can handle errors from the API and pass into login component if its needs.
