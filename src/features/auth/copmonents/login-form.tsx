@@ -31,7 +31,6 @@ const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
   });
   const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
 
-
   // Combine validation errors and API errors for display
   const errorsFields = { ...validationErrors, ...errors };
 
@@ -41,16 +40,13 @@ const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
       const value: FormErrorsState = await loginValidationSchema.validateAsync(formData, { abortEarly: false });
       onSubmit(value)
     } catch (error) {
-      if (error instanceof Joi.ValidationError) {
-        const errorMessages = error.details.reduce((acc, detail) => {
-          const key = detail.path[0] as keyof FormErrorsState;
-          acc[key] = detail.message;
-          return acc;
+      const errorData = errors as Joi.ValidationError;
+      const errorMessages = errorData.details.reduce((acc, detail) => {
+        const key = detail.path[0] as keyof FormErrorsState;
+        acc[key] = detail.message;
+        return acc;
         }, {} as FormErrorsState);
-        setValidationErrors(errorMessages);
-      } else {
-        // Here you can handle errors from the API
-      }
+      setValidationErrors(errorMessages);
     }
   };
 

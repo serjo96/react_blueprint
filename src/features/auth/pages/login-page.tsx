@@ -17,7 +17,7 @@ const LoginPage = () => {
       await login(value);
       navigate('/calendar');
     } catch (error) {
-        // Here you can handle errors from the API
+        // Here you can handle errors from the API and pass into login component if its needs.
     }
   };
 
