@@ -11,9 +11,9 @@ export type LoginFormMainFields = {
   rememberMe: boolean;
 }
 
-type FormErrorsState = {
+type FormErrorsState = LoginFormMainFields & {
   [key: string]: string | boolean;
-} & LoginFormMainFields;
+};
 
 type LoginFormProps = {
   onSubmit: (params: FormErrorsState) => void;

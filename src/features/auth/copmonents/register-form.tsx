@@ -1,58 +1,52 @@
 import {Box, Button, Grid, TextField} from "@mui/material";
 import React, { SyntheticEvent, useState } from 'react';
 import {Link} from "react-router-dom";
-
-import { useAuth } from '~/features/auth/cotext/useAuth';
-import {registrationValidationSchema} from "~/features/auth/validation/auth-validation";
 import Joi from "joi";
-import {eventEmitter, EventName} from "~/utils/eventEmitter";
-import {NotificationStatus} from "~/components/NotificationWrapper";
 
-type FormErrorsState = {
+import {registrationValidationSchema} from "~/features/auth/validation/auth-validation";
+
+export type RegisterFormMainFields = {
   email: string;
   password: string;
   confirmPassword: string;
+}
+
+type FormErrorsState = RegisterFormMainFields & {
   [key: string]: string | boolean;
 }
 
-const RegistrationForm = () => {
-  const { register } = useAuth();
+type RegisterFormProps = {
+  onSubmit: (params: any) => void;
+  errors?: {
+    email?: string;
+    password?: string;
+  }
+}
+
+const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
   const [formData, setFormData] = useState({
     password: '',
     confirmPassword: '',
     email: ''
   });
-  const [errors, setErrors] = useState<Partial<FormErrorsState>>({});
-
- /* const handleChange = (event: SyntheticEvent) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };*/
+  const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
+  // Combine validation errors and API errors for display
+  const errorsFields = { ...validationErrors, ...errors };
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     try {
       const {confirmPassword, ...values}: FormErrorsState = await registrationValidationSchema.validateAsync(formData, { abortEarly: false });
-      setErrors({});
-      await register(values);
-
-      eventEmitter.emit(
-        EventName.NOTIFICATION,
-        {
-          message: 'The email with confirm registration was sent on your mail.',
-          type: NotificationStatus.SUCCESS
-        });
-      // navigate('/calendar');
+      onSubmit(values)
     } catch (error) {
-      if (error instanceof Joi.ValidationError) {
-        const errorMessages = error.details.reduce((acc, detail) => {
-          const key = detail.path[0] as keyof FormErrorsState;
-          acc[key] = detail.message;
-          return acc;
+      const errorData = errors as Joi.ValidationError;
+      const errorMessages = errorData.details.reduce((acc, detail) => {
+        const key = detail.path[0] as keyof FormErrorsState;
+        acc[key] = detail.message;
+        return acc;
         }, {} as FormErrorsState);
-        setErrors(errorMessages);
-      } else {
-        // Here you can handle errors from the API
-      }
+      setValidationErrors(errorMessages);
+
     }
   };
 
@@ -81,8 +75,8 @@ const RegistrationForm = () => {
                 autoFocus
                 value={formData.email}
                 onChange={handleChange}
-                error={!!errors.email}
-                helperText={errors.email}
+                error={!!errorsFields.email}
+                helperText={errorsFields.email}
               />
             </Grid>
             <Grid item xs={12}>
@@ -96,8 +90,8 @@ const RegistrationForm = () => {
                 id="password"
                 value={formData.password}
                 onChange={handleChange}
-                error={Boolean(errors.password)}
-                helperText={errors.password || ''}
+                error={Boolean(errorsFields.password)}
+                helperText={errorsFields.password || ''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -111,8 +105,8 @@ const RegistrationForm = () => {
                 id="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                error={Boolean(errors.confirmPassword)}
-                helperText={errors.confirmPassword || ''}
+                error={Boolean(errorsFields.confirmPassword)}
+                helperText={errorsFields.confirmPassword || ''}
               />
             </Grid>
           </Grid>
