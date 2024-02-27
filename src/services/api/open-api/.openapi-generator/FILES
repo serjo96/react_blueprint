@@ -1,0 +1,16 @@
+.openapi-generator-ignore
+apis/AuthApi.ts
+apis/DefaultApi.ts
+apis/UsersApi.ts
+apis/index.ts
+index.ts
+models/AppControllerSendTestEmailRequest.ts
+models/CreateUserDto.ts
+models/EditUserDto.ts
+models/EmailVerificationEntity.ts
+models/ForgottenPasswordEntity.ts
+models/Profile.ts
+models/RefreshToken.ts
+models/UserEntity.ts
+models/index.ts
+runtime.ts
