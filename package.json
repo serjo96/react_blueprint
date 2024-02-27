@@ -9,7 +9,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint --ext js --ext jsx --ext ts src || exit 0",
     "format": "prettier --write 'src/**/*.{ts,tsx,json,css}'",
-    "generate-api": "openapi-generator-cli generate -i http://localhost:3000/docs -g typescript-axios -o api-types"
+    "generate-api": "openapi-generator-cli generate -i http://localhost:3000/api-json -g typescript-fetch -o ./src/services/api/open-api"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
