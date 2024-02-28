@@ -1,11 +1,11 @@
+import Joi from "joi";
 import React, { useState, useEffect } from 'react';
 import {Box, Button, TextField} from "@mui/material";
-import {loginValidationSchema} from "~/features/auth/validation/auth-validation";
-import Joi from "joi";
+
 import {ProfileValidationSchema} from "~/features/profile/validation/profile-validation";
-import ProfileApi from "~/features/profile/ProfileApi";
 import {useAuth} from "~/features/auth/cotext/useAuth";
 import {useLoading} from "~/context/LoadingContext";
+import {usersApi} from "~/services/api/initClient";
 
 type FormErrorsState = {
   email: string;
@@ -30,7 +30,7 @@ const ProfileForm = () => {
     const fetchUserProfile = async () => {
       if (user.id) {
         try {
-          const data = await ProfileApi.getUserProfile(user.id);
+          const data = await usersApi.usersControllerProfile({id: user.id});
           setUserData({
             ...userData,
             ...data
@@ -58,7 +58,10 @@ const ProfileForm = () => {
     event.preventDefault();
     try {
       await ProfileValidationSchema.validateAsync(userData, {abortEarly: false});
-      const updatedUser = await ProfileApi.updateUserProfile(user.id, userData)
+      const updatedUser = await usersApi.editUserById({
+        id: user.id,
+        editUserDto: userData
+      })
       setUserData({
         ...userData,
         ...updatedUser

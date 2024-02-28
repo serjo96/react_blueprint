@@ -1,9 +1,11 @@
-import config from "~/core/config/config";
-import ApiClient from '~/services/api/apiClient';
+import {AuthApi, UsersApi} from "~/services/api/open-api";
+import apiConfig from "~/services/api/api-config";
 
-const options = {
-  baseUrl: config.apiUrl
-};
+ const usersApi = new UsersApi(apiConfig);
+ const authApi = new AuthApi(apiConfig);
 
-const client = new ApiClient('/v1/', options);
-export default client;
+
+export {
+  usersApi,
+  authApi
+}

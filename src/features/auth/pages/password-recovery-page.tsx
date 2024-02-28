@@ -3,9 +3,9 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import {Box, Typography} from "@mui/material";
 
 import PasswordRecoveryForm from "~/features/auth/copmonents/password-recovery-form";
-import AuthAPI from "~/features/auth/AuthAPI";
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/notification-wrapper";
+import {authApi} from "~/services/api/initClient";
 
 const PasswordRecoveryPage = () => {
   const [error, setError] = useState('');
@@ -34,7 +34,7 @@ const PasswordRecoveryPage = () => {
   const handleSubmit = async (email: string) => {
     try {
       try {
-        await AuthAPI.resetPassword(email)
+        await authApi.authControllerSendEmailForgotPassword({email})
         eventEmitter.emit(
           EventName.NOTIFICATION,
           {

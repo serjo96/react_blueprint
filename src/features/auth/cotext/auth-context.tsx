@@ -1,19 +1,20 @@
 import React, { createContext, useEffect, useState } from 'react';
 
-import AuthAPI, { LoginPayload, RegistrationPayload } from '~/features/auth/AuthAPI';
-import initApiClient from '~/services/api/initClient';
 import {getUserData} from "~/utils/localStorageUtils";
+import {DependencyInjector} from "~/utils/dependencyInjector";
+import {authApi} from "~/services/api/initClient";
+import {AuthControllerLoginRequest, CreateUserDto} from "~/services/api/open-api";
 
 //TODO add type for user
 
 export interface AuthContextType {
   user?: {id: string, email: string};
   isAuthenticated: boolean;
-  login: (payloadData: LoginPayload) => Promise<void>;
+  login: (payloadData: AuthControllerLoginRequest) => Promise<void>;
   logout: () => void;
   loginWithToken: (token: string) => Promise<void>;
   refreshAccessToken: () => Promise<void>;
-  register: (regPayload: RegistrationPayload) => void;
+  register: (regPayload: CreateUserDto) => void;
 }
 
 export enum Tokens {
@@ -32,12 +33,14 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
 
   useEffect(() => {
-    initApiClient.setRefreshTokenMethod(refreshAccessToken);
+    DependencyInjector.injectRefreshTokenMethod(refreshAccessToken);
   }, []);
 
   const refreshAccessToken = async () => {
     try {
-      const newTokens: any = await AuthAPI.refreshToken(refreshToken);
+      const newTokens = await authApi.authControllerRefresh({refreshTokenDto: {
+          refreshToken
+        }});
       setAccessToken(newTokens.accessToken);
       setRefreshToken(newTokens.refreshToken);
       localStorage.setItem(Tokens.ACCESS_TOKEN, newTokens.accessToken);
@@ -46,31 +49,47 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       logout();
     }
   };
-  const login = async (loginPayload: LoginPayload) => {
-    const {user, token} = await AuthAPI.login(loginPayload);
+  const login = async (loginPayload: AuthControllerLoginRequest) => {
+    try {
+      const {user, token} = await authApi.authControllerLogin(loginPayload);
+      localSaveAuthData(user, token)
+      setAccessToken(token.accessToken);
+      setRefreshToken(token.refreshToken);
+      setUser(user);
+    } catch (error) {
 
-    localSaveAuthData(user, token)
-    setAccessToken(token.accessToken);
-    setRefreshToken(token.refreshToken);
-    setUser(user);
+    }
+
   };
 
   const loginWithToken = async (tempToken: string) => {
-    const {user, token} = await AuthAPI.loginWithToken(tempToken);
+    try {
+      const {user, token} = await authApi.authControllerLoginWithTempToken({
+        tempToken
+      });
 
-    localSaveAuthData(user, token)
-    setAccessToken(token.accessToken);
-    setRefreshToken(token.refreshToken);
-    setUser(user);
+      localSaveAuthData(user, token)
+      setAccessToken(token.accessToken);
+      setRefreshToken(token.refreshToken);
+      setUser(user);
+    } catch (error) {
+
+    }
   }
 
-  const register = async (regPayload: RegistrationPayload) => {
-    const {user, token} = await AuthAPI.register(regPayload);
+  const register = async (regPayload: CreateUserDto) => {
+    try {
+      const {user, token} = await authApi.authControllerRegister({
+        createUserDto: regPayload
+      });
 
-    localSaveAuthData(user, token)
-    setAccessToken(token.accessToken);
-    setRefreshToken(token.refreshToken);
-    setUser(user);
+      localSaveAuthData(user, token)
+      setAccessToken(token.accessToken);
+      setRefreshToken(token.refreshToken);
+      setUser(user);
+    } catch (error) {
+
+    }
   };
 
   const localSaveAuthData = (user: any, tokens: any) => {

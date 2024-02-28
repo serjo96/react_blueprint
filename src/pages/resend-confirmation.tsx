@@ -3,9 +3,9 @@ import {Box, Button, TextField, Typography, Container, Link} from '@mui/material
 import {Link as RouterLink} from 'react-router-dom';
 
 import {useAuth} from "~/features/auth/cotext/useAuth";
-import AuthAPI from "~/features/auth/AuthAPI";
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/notification-wrapper";
+import {authApi} from "~/services/api/initClient";
 
 
 const ResendConfirmation = () => {
@@ -40,7 +40,7 @@ const ResendConfirmation = () => {
     setError('')
 
     try {
-      await AuthAPI.resendConfirmationToken(email);
+      await authApi.authControllerSendEmailVerification({email});
       setIsSent(true);
       eventEmitter.emit(
         EventName.NOTIFICATION,
