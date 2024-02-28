@@ -1,20 +1,25 @@
-import React from 'react';
-import RegisterForm from '~/features/auth/copmonents/register-form';
+import React, {useState} from 'react';
+import RegisterForm, {RegisterFormSubmitData} from '~/features/auth/copmonents/register-form';
 import {Avatar, Box, Typography} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import {useNavigate} from "react-router-dom";
 
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/notification-wrapper";
 import {useLoading} from "~/context/LoadingContext";
 import {useAuth} from "~/features/auth/cotext/useAuth";
+import {ErrorValidationDto} from "~/services/api/open-api";
 
 const RegisterPage = () => {
   const { register } = useAuth();
+  const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: RegisterFormSubmitData) => {
     try {
       startLoading();
+      setErrors({})
       await register(formData);
 
       eventEmitter.emit(
@@ -23,9 +28,12 @@ const RegisterPage = () => {
           message: 'The email with confirm registration was sent on your mail.',
           type: NotificationStatus.SUCCESS
         });
-        // navigate('/protected-page');
+        navigate('/protected-page');
     } catch (error) {
-      // Here you can handle errors from the API
+      const responseErrors = error.response as ErrorValidationDto
+      if(responseErrors.errors) {
+        setErrors(responseErrors.errors)
+      }
     } finally {
       stopLoading();
     }
@@ -46,7 +54,7 @@ const RegisterPage = () => {
       <Typography component="h1" variant="h5">
         Sign up
       </Typography>
-      <RegisterForm onSubmit={handleSubmit}/>
+      <RegisterForm onSubmit={handleSubmit} errors={errors}/>
     </Box>
   );
 };

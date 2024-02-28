@@ -11,12 +11,14 @@ export type RegisterFormMainFields = {
   confirmPassword: string;
 }
 
+export type RegisterFormSubmitData = Omit<RegisterFormMainFields, 'confirmPassword'>
+
 type FormErrorsState = RegisterFormMainFields & {
   [key: string]: string | boolean;
 }
 
 type RegisterFormProps = {
-  onSubmit: (params: any) => void;
+  onSubmit: (params: RegisterFormSubmitData) => void;
   errors?: {
     email?: string;
     password?: string;
@@ -41,14 +43,13 @@ const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
       const {confirmPassword, ...values}: FormErrorsState = await registrationValidationSchema.validateAsync(formData, { abortEarly: false });
       onSubmit(values)
     } catch (error) {
-      const errorData = errors as Joi.ValidationError;
+      const errorData = error as Joi.ValidationError;
       const errorMessages = errorData.details.reduce((acc, detail) => {
         const key = detail.path[0] as keyof FormErrorsState;
         acc[key] = detail.message;
         return acc;
         }, {} as FormErrorsState);
       setValidationErrors(errorMessages);
-
     }
   };
 
@@ -62,27 +63,26 @@ const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
 
 
   return (
-
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                value={formData.email}
-                onChange={handleChange}
-                error={!!errorsFields.email}
-                helperText={errorsFields.email}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
+    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={formData.email}
+            onChange={handleChange}
+            error={!!errorsFields.email}
+            helperText={errorsFields.email}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
                 margin="normal"
                 required
                 fullWidth
