@@ -1,11 +1,11 @@
 import RegisterPage from '~/features/auth/pages/register-page';
 import LoginPage from '~/features/auth/pages/login-page';
-import CalendarPage from '~/features/calendar/pages/calendar-page';
 import HomePage from '~/pages/home-page';
 import PasswordRecoveryPage from "~/features/auth/pages/password-recovery-page";
 import ProfilePage from "~/features/profile/pages/profile-page";
 import ResendConfirmation from "~/pages/resend-confirmation";
 import NotFoundPage from "~/pages/not-found-page";
+import ProtectedPage from "~/pages/protected-page";
 
 const routes = [
   {
@@ -45,8 +45,8 @@ const routes = [
     protected: true
   },
   {
-    path: '/calendar',
-    component: CalendarPage,
+    path: '/protected-page',
+    component: ProtectedPage,
     protected: true
   },
   {
