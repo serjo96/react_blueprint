@@ -4,6 +4,7 @@ import Joi from "joi";
 import {Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField} from "@mui/material";
 
 import {loginValidationSchema} from "~/features/auth/validation/auth-validation";
+import {InputPassword} from "~/components/input-password";
 
 export type LoginFormMainFields = {
   email: string;
@@ -77,7 +78,7 @@ const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
         error={!!errorsFields.email}
         helperText={errorsFields.email}
       />
-      <TextField
+      <InputPassword
         margin="normal"
         required
         fullWidth
@@ -87,9 +88,8 @@ const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
         id="password"
         autoComplete="current-password"
         value={formData.password}
-        onChange={handleChange}
-        error={Boolean(errorsFields.password)}
-        helperText={errorsFields.password || ''}
+        handleChange={handleChange}
+        errors={errorsFields.password}
       />
       <FormControlLabel
         control={

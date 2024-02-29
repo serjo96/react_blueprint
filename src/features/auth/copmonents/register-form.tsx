@@ -94,7 +94,7 @@ const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
             id="password"
             value={formData.password}
             handleChange={handleChange}
-            error={Boolean(errorsFields.password)}
+            errors={errorsFields.password}
           />
             </Grid>
             <Grid item xs={12}>
