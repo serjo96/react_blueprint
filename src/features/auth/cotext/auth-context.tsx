@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
       setUser(user);
-      navigate('/protected-page');
+      navigate(location.state.from || '/protected-page');
     } catch (error) {
 
     }
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
       setUser(user);
-      navigate(location || '/protected-page');
+      navigate(location.state.from || '/protected-page');
     } catch (error) {
 
     }
