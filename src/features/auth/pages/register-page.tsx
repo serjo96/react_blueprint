@@ -28,7 +28,6 @@ const RegisterPage = () => {
           message: 'The email with confirm registration was sent on your mail.',
           type: NotificationStatus.SUCCESS
         });
-        navigate('/protected-page');
     } catch (error) {
       const responseErrors = error.response as ErrorValidationDto
       if(responseErrors.errors) {

@@ -3,14 +3,15 @@ import React, { createContext, useEffect, useState } from 'react';
 import {getUserData} from "~/utils/localStorageUtils";
 import {DependencyInjector} from "~/utils/dependencyInjector";
 import {authApi} from "~/services/api/initClient";
-import {AuthControllerLoginRequest, CreateUserDto} from "~/services/api/open-api";
+import {CreateUserDto, LoginByEmail} from "~/services/api/open-api";
+import {useLocation, useNavigate} from "react-router-dom";
 
 //TODO add type for user
 
 export interface AuthContextType {
   user?: {id: string, email: string};
   isAuthenticated: boolean;
-  login: (payloadData: AuthControllerLoginRequest) => Promise<void>;
+  login: (payloadData: LoginByEmail) => Promise<void>;
   logout: () => void;
   loginWithToken: (token: string) => Promise<void>;
   refreshAccessToken: () => Promise<void>;
@@ -26,7 +27,8 @@ export enum Tokens {
 export const AuthContext = createContext<AuthContextType>(null);
 
 export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(getUserData);
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem(Tokens.ACCESS_TOKEN));
   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem(Tokens.REFRESH_TOKEN));
@@ -49,17 +51,17 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       logout();
     }
   };
-  const login = async (loginPayload: AuthControllerLoginRequest) => {
+  const login = async (loginPayload: LoginByEmail) => {
     try {
-      const {user, token} = await authApi.authControllerLogin(loginPayload);
+      const {user, token} = await authApi.authControllerLogin({loginByEmail: loginPayload});
       localSaveAuthData(user, token)
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
       setUser(user);
+      navigate('/protected-page');
     } catch (error) {
 
     }
-
   };
 
   const loginWithToken = async (tempToken: string) => {
@@ -72,24 +74,22 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
       setUser(user);
+      navigate(location || '/protected-page');
     } catch (error) {
 
     }
   }
 
   const register = async (regPayload: CreateUserDto) => {
-    try {
-      const {user, token} = await authApi.authControllerRegister({
-        createUserDto: regPayload
-      });
+    const {user, token} = await authApi.authControllerRegister({
+      createUserDto: regPayload
+    });
 
-      localSaveAuthData(user, token)
-      setAccessToken(token.accessToken);
-      setRefreshToken(token.refreshToken);
-      setUser(user);
-    } catch (error) {
-
-    }
+    localSaveAuthData(user, token)
+    setAccessToken(token.accessToken);
+    setRefreshToken(token.refreshToken);
+    setUser(user);
+    navigate('/protected-page');
   };
 
   const localSaveAuthData = (user: any, tokens: any) => {
@@ -98,14 +98,21 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-  const logout = () => {
-    localStorage.removeItem(Tokens.ACCESS_TOKEN);
-    localStorage.removeItem(Tokens.REFRESH_TOKEN);
-    localStorage.setItem('user', JSON.stringify(user));
-    setAccessToken(null);
-    setRefreshToken(null);
-    setUser(null);
-    // navigate('/login');
+  const logout = async () => {
+    try {
+      localStorage.removeItem(Tokens.ACCESS_TOKEN);
+      localStorage.removeItem(Tokens.REFRESH_TOKEN);
+      localStorage.removeItem('user');
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      navigate('/')
+      await authApi.authControllerLogout({refreshTokenDto: {
+        refreshToken
+      }})
+    } catch (error) {
+
+    }
   };
 
 

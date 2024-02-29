@@ -36,7 +36,6 @@ const LoginPage = () => {
     try {
       startLoading();
       await login(formData);
-      navigate('/protected-page');
     } catch (error) {
       // Here you can handle errors from the API and pass into login component if its needs.
     } finally {
