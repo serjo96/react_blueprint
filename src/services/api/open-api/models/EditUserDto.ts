@@ -42,7 +42,7 @@ export interface EditUserDto {
      * @type {string}
      * @memberof EditUserDto
      */
-    roles: EditUserDtoRolesEnum;
+    roles?: EditUserDtoRolesEnum;
 }
 
 
@@ -63,7 +63,6 @@ export type EditUserDtoRolesEnum = typeof EditUserDtoRolesEnum[keyof typeof Edit
  */
 export function instanceOfEditUserDto(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "roles" in value;
 
     return isInstance;
 }
@@ -81,7 +80,7 @@ export function EditUserDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'email': !exists(json, 'email') ? undefined : json['email'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'password': !exists(json, 'password') ? undefined : json['password'],
-        'roles': json['roles'],
+        'roles': !exists(json, 'roles') ? undefined : json['roles'],
     };
 }
 

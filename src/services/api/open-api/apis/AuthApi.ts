@@ -16,10 +16,28 @@
 import * as runtime from '../runtime';
 import type {
   CreateUserDto,
+  ErrorValidationDto,
+  LoginByEmail,
+  RefreshTokenDto,
+  TokenValidationErrorDto,
+  TokensResponse,
+  UserWithToken,
 } from '../models/index';
 import {
     CreateUserDtoFromJSON,
     CreateUserDtoToJSON,
+    ErrorValidationDtoFromJSON,
+    ErrorValidationDtoToJSON,
+    LoginByEmailFromJSON,
+    LoginByEmailToJSON,
+    RefreshTokenDtoFromJSON,
+    RefreshTokenDtoToJSON,
+    TokenValidationErrorDtoFromJSON,
+    TokenValidationErrorDtoToJSON,
+    TokensResponseFromJSON,
+    TokensResponseToJSON,
+    UserWithTokenFromJSON,
+    UserWithTokenToJSON,
 } from '../models/index';
 
 export interface AuthControllerConfirmRegistrationRequest {
@@ -27,12 +45,19 @@ export interface AuthControllerConfirmRegistrationRequest {
 }
 
 export interface AuthControllerLoginRequest {
-    email: string;
-    password: string;
+    loginByEmail: LoginByEmail;
 }
 
 export interface AuthControllerLoginWithTempTokenRequest {
     tempToken: string;
+}
+
+export interface AuthControllerLogoutRequest {
+    refreshTokenDto: RefreshTokenDto;
+}
+
+export interface AuthControllerRefreshRequest {
+    refreshTokenDto: RefreshTokenDto;
 }
 
 export interface AuthControllerRegisterRequest {
@@ -85,46 +110,38 @@ export class AuthApi extends runtime.BaseAPI {
 
     /**
      */
-    async authControllerLoginRaw(requestParameters: AuthControllerLoginRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.email === null || requestParameters.email === undefined) {
-            throw new runtime.RequiredError('email','Required parameter requestParameters.email was null or undefined when calling authControllerLogin.');
-        }
-
-        if (requestParameters.password === null || requestParameters.password === undefined) {
-            throw new runtime.RequiredError('password','Required parameter requestParameters.password was null or undefined when calling authControllerLogin.');
+    async authControllerLoginRaw(requestParameters: AuthControllerLoginRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserWithToken>> {
+        if (requestParameters.loginByEmail === null || requestParameters.loginByEmail === undefined) {
+            throw new runtime.RequiredError('loginByEmail','Required parameter requestParameters.loginByEmail was null or undefined when calling authControllerLogin.');
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters.email !== undefined) {
-            queryParameters['email'] = requestParameters.email;
-        }
-
-        if (requestParameters.password !== undefined) {
-            queryParameters['password'] = requestParameters.password;
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
             path: `/api/v1/auth/login`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: LoginByEmailToJSON(requestParameters.loginByEmail),
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserWithTokenFromJSON(jsonValue));
     }
 
     /**
      */
-    async authControllerLogin(requestParameters: AuthControllerLoginRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.authControllerLoginRaw(requestParameters, initOverrides);
+    async authControllerLogin(requestParameters: AuthControllerLoginRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserWithToken> {
+        const response = await this.authControllerLoginRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**
      */
-    async authControllerLoginWithTempTokenRaw(requestParameters: AuthControllerLoginWithTempTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async authControllerLoginWithTempTokenRaw(requestParameters: AuthControllerLoginWithTempTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserWithToken>> {
         if (requestParameters.tempToken === null || requestParameters.tempToken === undefined) {
             throw new runtime.RequiredError('tempToken','Required parameter requestParameters.tempToken was null or undefined when calling authControllerLoginWithTempToken.');
         }
@@ -144,19 +161,80 @@ export class AuthApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserWithTokenFromJSON(jsonValue));
     }
 
     /**
      */
-    async authControllerLoginWithTempToken(requestParameters: AuthControllerLoginWithTempTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async authControllerLoginWithTempToken(requestParameters: AuthControllerLoginWithTempTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserWithToken> {
         const response = await this.authControllerLoginWithTempTokenRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async authControllerRegisterRaw(requestParameters: AuthControllerRegisterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async authControllerLogoutRaw(requestParameters: AuthControllerLogoutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.refreshTokenDto === null || requestParameters.refreshTokenDto === undefined) {
+            throw new runtime.RequiredError('refreshTokenDto','Required parameter requestParameters.refreshTokenDto was null or undefined when calling authControllerLogout.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/auth/logout`,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+            body: RefreshTokenDtoToJSON(requestParameters.refreshTokenDto),
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async authControllerLogout(requestParameters: AuthControllerLogoutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.authControllerLogoutRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async authControllerRefreshRaw(requestParameters: AuthControllerRefreshRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TokensResponse>> {
+        if (requestParameters.refreshTokenDto === null || requestParameters.refreshTokenDto === undefined) {
+            throw new runtime.RequiredError('refreshTokenDto','Required parameter requestParameters.refreshTokenDto was null or undefined when calling authControllerRefresh.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/auth/refresh-token`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: RefreshTokenDtoToJSON(requestParameters.refreshTokenDto),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => TokensResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async authControllerRefresh(requestParameters: AuthControllerRefreshRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TokensResponse> {
+        const response = await this.authControllerRefreshRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async authControllerRegisterRaw(requestParameters: AuthControllerRegisterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserWithToken>> {
         if (requestParameters.createUserDto === null || requestParameters.createUserDto === undefined) {
             throw new runtime.RequiredError('createUserDto','Required parameter requestParameters.createUserDto was null or undefined when calling authControllerRegister.');
         }
@@ -175,12 +253,12 @@ export class AuthApi extends runtime.BaseAPI {
             body: CreateUserDtoToJSON(requestParameters.createUserDto),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserWithTokenFromJSON(jsonValue));
     }
 
     /**
      */
-    async authControllerRegister(requestParameters: AuthControllerRegisterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async authControllerRegister(requestParameters: AuthControllerRegisterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserWithToken> {
         const response = await this.authControllerRegisterRaw(requestParameters, initOverrides);
         return await response.value();
     }

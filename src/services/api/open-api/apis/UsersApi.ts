@@ -16,11 +16,14 @@
 import * as runtime from '../runtime';
 import type {
   EditUserDto,
+  UserDto,
   UserEntity,
 } from '../models/index';
 import {
     EditUserDtoFromJSON,
     EditUserDtoToJSON,
+    UserDtoFromJSON,
+    UserDtoToJSON,
     UserEntityFromJSON,
     UserEntityToJSON,
 } from '../models/index';
@@ -28,6 +31,10 @@ import {
 export interface EditUserByIdRequest {
     id: any;
     editUserDto: EditUserDto;
+}
+
+export interface UsersControllerProfileRequest {
+    id: any;
 }
 
 export interface UsersControllerRemoveUserRequest {
@@ -121,7 +128,11 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async usersControllerProfileRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async usersControllerProfileRaw(requestParameters: UsersControllerProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDto>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling usersControllerProfile.');
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -135,19 +146,20 @@ export class UsersApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/api/v1/users/current`,
+            path: `/api/v1/users/current`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async usersControllerProfile(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.usersControllerProfileRaw(initOverrides);
+    async usersControllerProfile(requestParameters: UsersControllerProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
+        const response = await this.usersControllerProfileRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**
