@@ -1,9 +1,11 @@
-import {Box, Button, Grid, TextField} from "@mui/material";
+import {Box, Button, Grid, IconButton, InputAdornment, TextField} from "@mui/material";
 import React, { SyntheticEvent, useState } from 'react';
 import {Link} from "react-router-dom";
 import Joi from "joi";
 
 import {registrationValidationSchema} from "~/features/auth/validation/auth-validation";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
+import {InputPassword} from "~/components/input-password";
 
 export type RegisterFormMainFields = {
   email: string;
@@ -82,33 +84,30 @@ const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                value={formData.password}
-                onChange={handleChange}
-                error={Boolean(errorsFields.password)}
-                helperText={errorsFields.password || ''}
-              />
+          <InputPassword
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            value={formData.password}
+            handleChange={handleChange}
+            error={Boolean(errorsFields.password)}
+          />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <InputPassword
                 margin="normal"
                 required
                 fullWidth
                 name="confirmPassword"
                 label="Confirm password"
-                type="password"
                 id="confirmPassword"
                 value={formData.confirmPassword}
-                onChange={handleChange}
-                error={Boolean(errorsFields.confirmPassword)}
-                helperText={errorsFields.confirmPassword || ''}
+                handleChange={handleChange}
+                errors={errorsFields.confirmPassword}
               />
             </Grid>
           </Grid>
