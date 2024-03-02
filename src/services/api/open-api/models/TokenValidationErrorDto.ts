@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { TokenValidationPayload } from './TokenValidationPayload';
+import {
+    TokenValidationPayloadFromJSON,
+    TokenValidationPayloadFromJSONTyped,
+    TokenValidationPayloadToJSON,
+} from './TokenValidationPayload';
+
 /**
  * 
  * @export
@@ -27,10 +34,10 @@ export interface TokenValidationErrorDto {
     message: string;
     /**
      * 
-     * @type {number}
+     * @type {TokenValidationPayload}
      * @memberof TokenValidationErrorDto
      */
-    unlockTime: number;
+    payload: TokenValidationPayload;
 }
 
 /**
@@ -39,7 +46,7 @@ export interface TokenValidationErrorDto {
 export function instanceOfTokenValidationErrorDto(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "message" in value;
-    isInstance = isInstance && "unlockTime" in value;
+    isInstance = isInstance && "payload" in value;
 
     return isInstance;
 }
@@ -55,7 +62,7 @@ export function TokenValidationErrorDtoFromJSONTyped(json: any, ignoreDiscrimina
     return {
         
         'message': json['message'],
-        'unlockTime': json['unlockTime'],
+        'payload': TokenValidationPayloadFromJSON(json['payload']),
     };
 }
 
@@ -69,7 +76,7 @@ export function TokenValidationErrorDtoToJSON(value?: TokenValidationErrorDto | 
     return {
         
         'message': value.message,
-        'unlockTime': value.unlockTime,
+        'payload': TokenValidationPayloadToJSON(value.payload),
     };
 }
 

@@ -15,9 +15,9 @@ models/ProfileDto.ts
 models/RefreshToken.ts
 models/RefreshTokenDto.ts
 models/TokenValidationErrorDto.ts
+models/TokenValidationPayload.ts
 models/TokensResponse.ts
 models/UserDto.ts
 models/UserEntity.ts
 models/UserWithToken.ts
 models/index.ts
-runtime.ts

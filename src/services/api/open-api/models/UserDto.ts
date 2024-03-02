@@ -31,6 +31,12 @@ export interface UserDto {
      * @type {string}
      * @memberof UserDto
      */
+    id: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
     email: string;
     /**
      * 
@@ -82,6 +88,7 @@ export type UserDtoRolesEnum = typeof UserDtoRolesEnum[keyof typeof UserDtoRoles
  */
 export function instanceOfUserDto(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "id" in value;
     isInstance = isInstance && "email" in value;
     isInstance = isInstance && "roles" in value;
     isInstance = isInstance && "confirmed" in value;
@@ -99,6 +106,7 @@ export function UserDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): U
     }
     return {
         
+        'id': json['id'],
         'email': json['email'],
         'login': !exists(json, 'login') ? undefined : json['login'],
         'roles': json['roles'],
@@ -117,6 +125,7 @@ export function UserDtoToJSON(value?: UserDto | null): any {
     }
     return {
         
+        'id': value.id,
         'email': value.email,
         'login': value.login,
         'roles': value.roles,

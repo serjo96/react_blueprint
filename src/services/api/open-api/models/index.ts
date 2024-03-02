@@ -12,6 +12,7 @@ export * from './ProfileDto';
 export * from './RefreshToken';
 export * from './RefreshTokenDto';
 export * from './TokenValidationErrorDto';
+export * from './TokenValidationPayload';
 export * from './TokensResponse';
 export * from './UserDto';
 export * from './UserEntity';
