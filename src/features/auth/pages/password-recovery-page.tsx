@@ -6,6 +6,8 @@ import PasswordRecoveryForm from "~/features/auth/copmonents/password-recovery-f
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/notification-wrapper";
 import {authApi} from "~/services/api/initClient";
+import {ResponseError, TokenValidationErrorDto} from "~/services/api/open-api";
+import {extractErrorData} from "~/utils/extractErrorData";
 
 const PasswordRecoveryPage = () => {
   const [error, setError] = useState('');
@@ -32,7 +34,6 @@ const PasswordRecoveryPage = () => {
     return () => clearInterval(interval);
   }, [unlockTime]);
   const handleSubmit = async (email: string) => {
-    try {
       try {
         await authApi.authControllerSendEmailForgotPassword({email})
         eventEmitter.emit(
@@ -42,16 +43,14 @@ const PasswordRecoveryPage = () => {
             type: NotificationStatus.SUCCESS
           });
       } catch (error) {
-        if(error.unlockTime) {
-          setError(error.message)
-          setTimer(error.unlockTime)
+        if(error instanceof ResponseError) {
+          const errorData = await extractErrorData<TokenValidationErrorDto>(error);
+          setError(errorData.message)
+          if(errorData.payload) {
+            setTimer(errorData.payload.unlockTime)
+          }
         }
       }
-
-    } catch (error) {
-      setError(error.message)
-    }
-
   };
   return (
     <Box
