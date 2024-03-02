@@ -16,9 +16,7 @@ const App = () => {
         <AuthProvider>
           <Header />
           <Container maxWidth="sm">
-            <Box sx={{ my: 4 }}>
-              <AppRoutes />
-            </Box>
+            <AppRoutes />
           </Container>
         </AuthProvider>
       </LoadingProvider>

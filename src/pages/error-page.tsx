@@ -18,7 +18,17 @@ const ErrorPage = () => {
   const descriptionFromQuery = queryParams.get('description') || "Try going back to the homepage or contact support.";
 
   return (
-    <Container component="main" maxWidth="md" sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Container component="main" maxWidth="md">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+          textAlign: 'center',
+        }}
+      >
       <ErrorOutlineIcon
         sx={{
           fontSize: 150,
@@ -47,6 +57,7 @@ const ErrorPage = () => {
             </Button>
           )}
         </Box>
+      </Box>
     </Container>
   );
 };
