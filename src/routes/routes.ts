@@ -6,6 +6,7 @@ import ProfilePage from "~/features/profile/pages/profile-page";
 import ResendConfirmation from "~/pages/resend-confirmation";
 import NotFoundPage from "~/pages/not-found-page";
 import ProtectedPage from "~/pages/protected-page";
+import ErrorPage from "~/pages/error-page";
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: '/protected-page',
     component: ProtectedPage,
     protected: true
+  },
+  {
+    path: '/error',
+    component: ErrorPage,
+    protected: false
   },
   {
     path: '*',
