@@ -6,6 +6,9 @@ import {useAuth} from "~/features/auth/cotext/useAuth";
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/notification-wrapper";
 import {authApi} from "~/services/api/initClient";
+import {ResponseError, TokenValidationErrorDto} from "~/services/api/open-api";
+import {extractErrorData} from "~/utils/extractErrorData";
+import {useCountdownTimer} from "~/hooks/useCountdownTimer";
 
 
 const ResendConfirmation = () => {
@@ -13,28 +16,9 @@ const ResendConfirmation = () => {
   const [email, setEmail] = useState(user?.email || '');
   const [error, setError] = useState('');
   const [isSent, setIsSent] = useState(false);
-  const [unlockTime, setUnlockTime] = useState(null);
   const [timer, setTimer] = useState(null);
+  const remainingTime = useCountdownTimer(timer);
 
-  useEffect(() => {
-    // Update timer every second
-    const interval = setInterval(() => {
-      if (unlockTime) {
-        const currentTime = Math.floor(Date.now() / 1000);
-        const secondsLeft = unlockTime - currentTime;
-
-        if (secondsLeft <= 0) {
-          clearInterval(interval);
-          setTimer(null);
-          setUnlockTime(null);
-        } else {
-          setTimer(secondsLeft);
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [unlockTime]);
 
   const handleResendToken = async () => {
     setError('')
@@ -49,9 +33,12 @@ const ResendConfirmation = () => {
           type: NotificationStatus.SUCCESS
         });
     } catch (error) {
-      if(error.unlockTime) {
-        setError(error.message)
-        setTimer(error.unlockTime)
+      if(error instanceof ResponseError) {
+        const errorData = await extractErrorData<TokenValidationErrorDto>(error);
+        setError(errorData.message)
+        if(errorData.payload) {
+          setTimer(errorData.payload.unlockTime)
+        }
       }
     }
   };
@@ -91,9 +78,9 @@ const ResendConfirmation = () => {
           Send again
         </Button>
 
-        {timer && (
+        {remainingTime && (
           <Typography sx={{ mt: 2 }}>
-            Please wait {timer} seconds(s) before sending again.
+            Please wait {remainingTime} before sending again.
           </Typography>
         )}
       </Box>

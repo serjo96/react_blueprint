@@ -5,6 +5,7 @@ import Joi from "joi";
 import {resetPasswordValidationSchema} from "~/features/auth/validation/auth-validation";
 import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/notification-wrapper";
+import {useCountdownTimer} from "~/hooks/useCountdownTimer";
 
 type RecoveryPasswordFormProps = {
   onSubmit: (email: string) => void;
@@ -15,7 +16,7 @@ type RecoveryPasswordFormProps = {
 const PasswordRecoveryForm = ({onSubmit, timer, error}: RecoveryPasswordFormProps) => {
   const [email, setEmail] = useState('');
   const [validationError, setValidationError] = useState<string>(error || '');
-
+  const remainingTime = useCountdownTimer(timer);
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
@@ -58,14 +59,14 @@ const PasswordRecoveryForm = ({onSubmit, timer, error}: RecoveryPasswordFormProp
         fullWidth
         variant="contained"
         sx={{ mt: 3, mb: 2 }}
-        disabled={Boolean(timer)}
+        disabled={Boolean(remainingTime)}
       >
-       Recovery password
+        Send email to reset your password
       </Button>
 
-      {timer && (
+      {remainingTime && (
         <Typography sx={{ mt: 2 }}>
-          Please wait {timer} seconds(s) before sending again.
+          Please wait {remainingTime} before sending again.
         </Typography>
       )}
     </Box>
