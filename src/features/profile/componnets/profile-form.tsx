@@ -15,13 +15,13 @@ type FormErrorsState = {
 }
 
 const ProfileForm = () => {
+  const { user } = useAuth();
   const [errors, setErrors] = useState<Partial<FormErrorsState>>({});
   const [userData, setUserData] = useState({
     name: '',
-    email: '',
+    email: user && user.email || '',
     password: '',
   });
-  const {user} = useAuth()
   const { startLoading,stopLoading } = useLoading();
 
   useEffect(
