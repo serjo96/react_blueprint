@@ -25,12 +25,6 @@ const PasswordRecoveryForm = ({onSubmit, timer, error}: RecoveryPasswordFormProp
       await resetPasswordValidationSchema.validateAsync(email, { abortEarly: false });
 
       onSubmit(email)
-      eventEmitter.emit(
-        EventName.NOTIFICATION,
-        {
-          message: 'The email with recovery instruction was sent successfully. Check your email.',
-          type: NotificationStatus.SUCCESS
-        });
     } catch (error) {
       if (error instanceof Joi.ValidationError) {
         setValidationError(error.message);

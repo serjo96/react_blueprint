@@ -1,4 +1,4 @@
-import { validateConfig } from '~/core/config/validateConfig';
+import {validateConfig} from "~/core/validateConfig";
 
 validateConfig(process.env);
 
