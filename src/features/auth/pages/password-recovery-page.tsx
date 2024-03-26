@@ -35,7 +35,8 @@ const PasswordRecoveryPage = () => {
   }, [unlockTime]);
   const handleSubmit = async (email: string) => {
       try {
-        await authApi.authControllerSendEmailForgotPassword({email})
+        await authApi.forgotPassword({email});
+
         eventEmitter.emit(
           EventName.NOTIFICATION,
           {

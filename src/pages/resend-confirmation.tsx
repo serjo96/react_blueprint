@@ -24,7 +24,7 @@ const ResendConfirmation = () => {
     setError('')
 
     try {
-      await authApi.authControllerSendEmailVerification({email});
+      await authApi.resendVerificationEmail({email});
       setIsSent(true);
       eventEmitter.emit(
         EventName.NOTIFICATION,

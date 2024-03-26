@@ -43,7 +43,7 @@ export interface UpdateUserBodyDto {
      * @type {ProfileDto}
      * @memberof UpdateUserBodyDto
      */
-    profile: ProfileDto;
+    profile?: ProfileDto;
 }
 
 /**
@@ -51,7 +51,6 @@ export interface UpdateUserBodyDto {
  */
 export function instanceOfUpdateUserBodyDto(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "profile" in value;
 
     return isInstance;
 }
@@ -68,7 +67,7 @@ export function UpdateUserBodyDtoFromJSONTyped(json: any, ignoreDiscriminator: b
         
         'email': !exists(json, 'email') ? undefined : json['email'],
         'nickname': !exists(json, 'nickname') ? undefined : json['nickname'],
-        'profile': ProfileDtoFromJSON(json['profile']),
+        'profile': !exists(json, 'profile') ? undefined : ProfileDtoFromJSON(json['profile']),
     };
 }
 

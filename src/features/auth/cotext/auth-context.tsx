@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
   const refreshAccessToken = async () => {
     try {
-      const newTokens = await authApi.authControllerRefresh({refreshTokenDto: {
+      const newTokens = await authApi.updateAccessToken({refreshTokenDto: {
           refreshToken
         }});
       setAccessToken(newTokens.accessToken);
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
   const login = async (loginPayload: LoginByEmail) => {
     try {
       console.log(2314);
-      const {user, token} = await authApi.authControllerLogin({loginByEmail: loginPayload});
+      const {user, token} = await authApi.login({loginByEmail: loginPayload});
       console.log(5555);
       localSaveAuthData(user, token)
       setAccessToken(token.accessToken);
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
   const loginWithToken = async (tempToken: string) => {
     try {
-      const {user, token} = await authApi.authControllerLoginWithTempToken({
+      const {user, token} = await authApi.tokenLogin({
         tempToken
       });
 
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
   }
 
   const register = async (regPayload: CreateUserDto) => {
-    const {user, token} = await authApi.authControllerRegister({
+    const {user, token} = await authApi.signUp({
       createUserDto: regPayload
     });
 
@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       setRefreshToken(null);
       setUser(null);
       navigate('/')
-      await authApi.authControllerLogout({refreshTokenDto: {
+      await authApi.logout({refreshTokenDto: {
         refreshToken
       }})
     } catch (error) {

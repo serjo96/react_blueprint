@@ -43,7 +43,7 @@ export interface AdminUpdateUserBodyDto {
      * @type {ProfileDto}
      * @memberof AdminUpdateUserBodyDto
      */
-    profile: ProfileDto;
+    profile?: ProfileDto;
     /**
      * 
      * @type {string}
@@ -70,7 +70,6 @@ export type AdminUpdateUserBodyDtoRolesEnum = typeof AdminUpdateUserBodyDtoRoles
  */
 export function instanceOfAdminUpdateUserBodyDto(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "profile" in value;
 
     return isInstance;
 }
@@ -87,7 +86,7 @@ export function AdminUpdateUserBodyDtoFromJSONTyped(json: any, ignoreDiscriminat
         
         'email': !exists(json, 'email') ? undefined : json['email'],
         'nickname': !exists(json, 'nickname') ? undefined : json['nickname'],
-        'profile': ProfileDtoFromJSON(json['profile']),
+        'profile': !exists(json, 'profile') ? undefined : ProfileDtoFromJSON(json['profile']),
         'roles': !exists(json, 'roles') ? undefined : json['roles'],
     };
 }
