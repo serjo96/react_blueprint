@@ -8,7 +8,7 @@ import {eventEmitter, EventName} from "~/utils/eventEmitter";
 import {NotificationStatus} from "~/components/notification-wrapper";
 import {useLoading} from "~/context/LoadingContext";
 import {useAuth} from "~/features/auth/cotext/useAuth";
-import {ErrorValidationDto} from "~/services/api/open-api";
+import {CustomValidationErrorDto} from "~/services/api/open-api";
 
 const RegisterPage = () => {
   const { register } = useAuth();
@@ -29,7 +29,7 @@ const RegisterPage = () => {
           type: NotificationStatus.SUCCESS
         });
     } catch (error) {
-      const responseErrors = error.response as ErrorValidationDto
+      const responseErrors = error.response as CustomValidationErrorDto
       if(responseErrors.errors) {
         setErrors(responseErrors.errors)
       }
