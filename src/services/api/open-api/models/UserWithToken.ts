@@ -19,12 +19,12 @@ import {
     TokensResponseFromJSONTyped,
     TokensResponseToJSON,
 } from './TokensResponse';
-import type { UserDto } from './UserDto';
+import type { UserResponseDto } from './UserResponseDto';
 import {
-    UserDtoFromJSON,
-    UserDtoFromJSONTyped,
-    UserDtoToJSON,
-} from './UserDto';
+    UserResponseDtoFromJSON,
+    UserResponseDtoFromJSONTyped,
+    UserResponseDtoToJSON,
+} from './UserResponseDto';
 
 /**
  * 
@@ -34,10 +34,10 @@ import {
 export interface UserWithToken {
     /**
      * 
-     * @type {UserDto}
+     * @type {UserResponseDto}
      * @memberof UserWithToken
      */
-    user: UserDto;
+    user: UserResponseDto;
     /**
      * 
      * @type {TokensResponse}
@@ -67,7 +67,7 @@ export function UserWithTokenFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
-        'user': UserDtoFromJSON(json['user']),
+        'user': UserResponseDtoFromJSON(json['user']),
         'token': TokensResponseFromJSON(json['token']),
     };
 }
@@ -81,7 +81,7 @@ export function UserWithTokenToJSON(value?: UserWithToken | null): any {
     }
     return {
         
-        'user': UserDtoToJSON(value.user),
+        'user': UserResponseDtoToJSON(value.user),
         'token': TokensResponseToJSON(value.token),
     };
 }

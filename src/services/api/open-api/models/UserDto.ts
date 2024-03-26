@@ -58,16 +58,16 @@ export interface UserDto {
     confirmed: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof UserDto
-     */
-    password?: string;
-    /**
-     * 
      * @type {ProfileDto}
      * @memberof UserDto
      */
     profile?: ProfileDto;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    password?: string;
 }
 
 
@@ -111,8 +111,8 @@ export function UserDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): U
         'login': !exists(json, 'login') ? undefined : json['login'],
         'roles': json['roles'],
         'confirmed': json['confirmed'],
-        'password': !exists(json, 'password') ? undefined : json['password'],
         'profile': !exists(json, 'profile') ? undefined : ProfileDtoFromJSON(json['profile']),
+        'password': !exists(json, 'password') ? undefined : json['password'],
     };
 }
 
@@ -130,8 +130,8 @@ export function UserDtoToJSON(value?: UserDto | null): any {
         'login': value.login,
         'roles': value.roles,
         'confirmed': value.confirmed,
-        'password': value.password,
         'profile': ProfileDtoToJSON(value.profile),
+        'password': value.password,
     };
 }
 

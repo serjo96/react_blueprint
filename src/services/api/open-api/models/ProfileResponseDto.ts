@@ -16,40 +16,47 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface ProfileDto
+ * @interface ProfileResponseDto
  */
-export interface ProfileDto {
+export interface ProfileResponseDto {
     /**
      * 
      * @type {string}
-     * @memberof ProfileDto
+     * @memberof ProfileResponseDto
+     */
+    id: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProfileResponseDto
      */
     name: string;
     /**
      * 
      * @type {Date}
-     * @memberof ProfileDto
+     * @memberof ProfileResponseDto
      */
     birthday: Date;
     /**
      * 
      * @type {string}
-     * @memberof ProfileDto
+     * @memberof ProfileResponseDto
      */
     photoUrl: string;
     /**
      * 
      * @type {string}
-     * @memberof ProfileDto
+     * @memberof ProfileResponseDto
      */
     userId: string;
 }
 
 /**
- * Check if a given object implements the ProfileDto interface.
+ * Check if a given object implements the ProfileResponseDto interface.
  */
-export function instanceOfProfileDto(value: object): boolean {
+export function instanceOfProfileResponseDto(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "id" in value;
     isInstance = isInstance && "name" in value;
     isInstance = isInstance && "birthday" in value;
     isInstance = isInstance && "photoUrl" in value;
@@ -58,16 +65,17 @@ export function instanceOfProfileDto(value: object): boolean {
     return isInstance;
 }
 
-export function ProfileDtoFromJSON(json: any): ProfileDto {
-    return ProfileDtoFromJSONTyped(json, false);
+export function ProfileResponseDtoFromJSON(json: any): ProfileResponseDto {
+    return ProfileResponseDtoFromJSONTyped(json, false);
 }
 
-export function ProfileDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): ProfileDto {
+export function ProfileResponseDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): ProfileResponseDto {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
+        'id': json['id'],
         'name': json['name'],
         'birthday': (new Date(json['birthday'])),
         'photoUrl': json['photoUrl'],
@@ -75,7 +83,7 @@ export function ProfileDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     };
 }
 
-export function ProfileDtoToJSON(value?: ProfileDto | null): any {
+export function ProfileResponseDtoToJSON(value?: ProfileResponseDto | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -84,6 +92,7 @@ export function ProfileDtoToJSON(value?: ProfileDto | null): any {
     }
     return {
         
+        'id': value.id,
         'name': value.name,
         'birthday': (value.birthday.toISOString()),
         'photoUrl': value.photoUrl,

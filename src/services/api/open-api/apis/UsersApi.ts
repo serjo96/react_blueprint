@@ -15,30 +15,34 @@
 
 import * as runtime from '../runtime';
 import type {
-  EditUserDto,
-  UserDto,
-  UserEntity,
+  AdminUpdateUserBodyDto,
+  UnauthorizedResponseDto,
+  UpdateUserBodyDto,
+  UserResponseDto,
 } from '../models/index';
 import {
-    EditUserDtoFromJSON,
-    EditUserDtoToJSON,
-    UserDtoFromJSON,
-    UserDtoToJSON,
-    UserEntityFromJSON,
-    UserEntityToJSON,
+    AdminUpdateUserBodyDtoFromJSON,
+    AdminUpdateUserBodyDtoToJSON,
+    UnauthorizedResponseDtoFromJSON,
+    UnauthorizedResponseDtoToJSON,
+    UpdateUserBodyDtoFromJSON,
+    UpdateUserBodyDtoToJSON,
+    UserResponseDtoFromJSON,
+    UserResponseDtoToJSON,
 } from '../models/index';
 
-export interface EditUserByIdRequest {
+export interface AdminEditUserRequest {
     id: any;
-    editUserDto: EditUserDto;
+    adminUpdateUserBodyDto: AdminUpdateUserBodyDto;
 }
 
-export interface UsersControllerProfileRequest {
+export interface DeleteUserRequest {
     id: any;
 }
 
-export interface UsersControllerRemoveUserRequest {
+export interface EditUserRequest {
     id: any;
+    updateUserBodyDto: UpdateUserBodyDto;
 }
 
 /**
@@ -47,16 +51,16 @@ export interface UsersControllerRemoveUserRequest {
 export class UsersApi extends runtime.BaseAPI {
 
     /**
-     * Receive id of user with payload for edit, check exist user if not return exception, if ok find user by id and edit him.
-     * Receive id of user with payload and edit him.
+     * Update user only for admin, you may to update any param like password and etc.
+     * Update user data.
      */
-    async editUserByIdRaw(requestParameters: EditUserByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserEntity>> {
+    async adminEditUserRaw(requestParameters: AdminEditUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserResponseDto>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling editUserById.');
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling adminEditUser.');
         }
 
-        if (requestParameters.editUserDto === null || requestParameters.editUserDto === undefined) {
-            throw new runtime.RequiredError('editUserDto','Required parameter requestParameters.editUserDto was null or undefined when calling editUserById.');
+        if (requestParameters.adminUpdateUserBodyDto === null || requestParameters.adminUpdateUserBodyDto === undefined) {
+            throw new runtime.RequiredError('adminUpdateUserBodyDto','Required parameter requestParameters.adminUpdateUserBodyDto was null or undefined when calling adminEditUser.');
         }
 
         const queryParameters: any = {};
@@ -74,99 +78,31 @@ export class UsersApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/api/v1/users/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-            method: 'PUT',
+            path: `/api/v1/users/admin/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: EditUserDtoToJSON(requestParameters.editUserDto),
+            body: AdminUpdateUserBodyDtoToJSON(requestParameters.adminUpdateUserBodyDto),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserEntityFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserResponseDtoFromJSON(jsonValue));
     }
 
     /**
-     * Receive id of user with payload for edit, check exist user if not return exception, if ok find user by id and edit him.
-     * Receive id of user with payload and edit him.
+     * Update user only for admin, you may to update any param like password and etc.
+     * Update user data.
      */
-    async editUserById(requestParameters: EditUserByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserEntity> {
-        const response = await this.editUserByIdRaw(requestParameters, initOverrides);
+    async adminEditUser(requestParameters: AdminEditUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserResponseDto> {
+        const response = await this.adminEditUserRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Receive all users of app
+     * Delete user.
      */
-    async receiveAllUsersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("bearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-        const response = await this.request({
-            path: `/api/v1/users`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Receive all users of app
-     */
-    async receiveAllUsers(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.receiveAllUsersRaw(initOverrides);
-    }
-
-    /**
-     */
-    async usersControllerProfileRaw(requestParameters: UsersControllerProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDto>> {
+    async deleteUserRaw(requestParameters: DeleteUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<UserResponseDto>>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling usersControllerProfile.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("bearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-        const response = await this.request({
-            path: `/api/v1/users/current`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserDtoFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async usersControllerProfile(requestParameters: UsersControllerProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
-        const response = await this.usersControllerProfileRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async usersControllerRemoveUserRaw(requestParameters: UsersControllerRemoveUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling usersControllerRemoveUser.');
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteUser.');
         }
 
         const queryParameters: any = {};
@@ -188,13 +124,130 @@ export class UsersApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(UserResponseDtoFromJSON));
     }
 
     /**
+     * Delete user.
      */
-    async usersControllerRemoveUser(requestParameters: UsersControllerRemoveUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.usersControllerRemoveUserRaw(requestParameters, initOverrides);
+    async deleteUser(requestParameters: DeleteUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<UserResponseDto>> {
+        const response = await this.deleteUserRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Receive id of user with payload for edit, checks existing user, if not return exception, if ok find user by id and edit him.
+     * Update user data.
+     */
+    async editUserRaw(requestParameters: EditUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserResponseDto>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling editUser.');
+        }
+
+        if (requestParameters.updateUserBodyDto === null || requestParameters.updateUserBodyDto === undefined) {
+            throw new runtime.RequiredError('updateUserBodyDto','Required parameter requestParameters.updateUserBodyDto was null or undefined when calling editUser.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/api/v1/users/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpdateUserBodyDtoToJSON(requestParameters.updateUserBodyDto),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserResponseDtoFromJSON(jsonValue));
+    }
+
+    /**
+     * Receive id of user with payload for edit, checks existing user, if not return exception, if ok find user by id and edit him.
+     * Update user data.
+     */
+    async editUser(requestParameters: EditUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserResponseDto> {
+        const response = await this.editUserRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Return all users of app.
+     */
+    async getAllUsersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<UserResponseDto>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/api/v1/users`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(UserResponseDtoFromJSON));
+    }
+
+    /**
+     * Return all users of app.
+     */
+    async getAllUsers(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<UserResponseDto>> {
+        const response = await this.getAllUsersRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Return current auth user.
+     */
+    async getCurrentUserRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserResponseDto>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/api/v1/users/current`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserResponseDtoFromJSON(jsonValue));
+    }
+
+    /**
+     * Return current auth user.
+     */
+    async getCurrentUser(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserResponseDto> {
+        const response = await this.getCurrentUserRaw(initOverrides);
+        return await response.value();
     }
 
 }

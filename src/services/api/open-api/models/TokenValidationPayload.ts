@@ -20,7 +20,7 @@ import { exists, mapValues } from '../runtime';
  */
 export interface TokenValidationPayload {
     /**
-     * 
+     * Time before unlock next attempt in Unix time.
      * @type {number}
      * @memberof TokenValidationPayload
      */
