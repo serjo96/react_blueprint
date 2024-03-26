@@ -4,7 +4,6 @@ import {Link} from "react-router-dom";
 import Joi from "joi";
 
 import {registrationValidationSchema} from "~/features/auth/validation/auth-validation";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {InputPassword} from "~/components/input-password";
 
 export type RegisterFormMainFields = {
