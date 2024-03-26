@@ -1,50 +1,41 @@
 import Joi from "joi";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {Box, Button, TextField} from "@mui/material";
 
 import {ProfileValidationSchema} from "~/features/profile/validation/profile-validation";
-import {useAuth} from "~/features/auth/cotext/useAuth";
-import {useLoading} from "~/context/LoadingContext";
-import {usersApi} from "~/services/api/initClient";
+import {UserDto} from "~/services/api/open-api/models/UserDto";
 
 type FormErrorsState = {
   email: string;
-  password: string;
   name: string;
   [key: string]: string | boolean;
 }
 
-const ProfileForm = () => {
-  const { user } = useAuth();
-  const [errors, setErrors] = useState<Partial<FormErrorsState>>({});
-  const [userData, setUserData] = useState({
-    name: '',
+export type FormStateTypes = {
+  name: string,
+  email: string
+}
+
+
+type ProfileFormProps = {
+  onSubmit: (params: FormStateTypes) => void;
+
+  user?: Partial<UserDto>
+  errors?: {
+    email?: string;
+    name?: string;
+  }
+}
+
+const ProfileForm = ({onSubmit, user, errors}: ProfileFormProps) => {
+  const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
+  const [userData, setUserData] = useState<FormStateTypes>({
+    name: user && user.profile.name || '',
     email: user && user.email || '',
-    password: '',
   });
-  const { startLoading,stopLoading } = useLoading();
 
-  useEffect(
-    () => {
-    startLoading();
-    const fetchUserProfile = async () => {
-      if (user.id) {
-        try {
-          const data = await usersApi.usersControllerProfile({id: user.id});
-          setUserData({
-            ...userData,
-            ...data
-          })
-        } finally {
-          stopLoading()
-        }
-      } else {
-        stopLoading()
-      }
-    };
-
-    fetchUserProfile();
-  }, [user]);
+  // Combine validation errors and API errors for display
+  let errorsFields = { ...validationErrors, ...errors };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,26 +48,18 @@ const ProfileForm = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await ProfileValidationSchema.validateAsync(userData, {abortEarly: false});
-      const updatedUser = await usersApi.editUserById({
-        id: user.id,
-        editUserDto: userData
-      })
-      setUserData({
-        ...userData,
-        ...updatedUser
-      })
+      setValidationErrors({})
+      errorsFields = null
+      const values = await ProfileValidationSchema.validateAsync(userData, {abortEarly: false});
+      onSubmit(values)
     } catch (error) {
-      if (error instanceof Joi.ValidationError) {
-        const errorMessages = error.details.reduce((acc, detail) => {
-          const key = detail.path[0] as keyof FormErrorsState;
-          acc[key] = detail.message;
-          return acc;
-        }, {} as FormErrorsState);
-        setErrors(errorMessages);
-      } else {
-        // Here you can handle errors from the API
-      }
+      const errorData = error as Joi.ValidationError;
+      const errorMessages = errorData.details.reduce((acc, detail) => {
+        const key = detail.path[0] as keyof FormErrorsState;
+        acc[key] = detail.message;
+        return acc;
+      }, {} as FormErrorsState);
+      setValidationErrors(errorMessages);
     }
   }
 
@@ -93,6 +76,8 @@ const ProfileForm = () => {
         autoFocus
         value={userData.name}
         onChange={handleChange}
+        error={!!errorsFields.name}
+        helperText={errorsFields.name}
       />
       <TextField
         margin="normal"
@@ -104,18 +89,8 @@ const ProfileForm = () => {
         autoComplete="email"
         value={userData.email}
         onChange={handleChange}
-      />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        name="password"
-        label="Новый пароль"
-        type="password"
-        id="password"
-        autoComplete="new-password"
-        value={userData.password}
-        onChange={handleChange}
+        error={!!errorsFields.email}
+        helperText={errorsFields.email}
       />
       <Button
         type="submit"
