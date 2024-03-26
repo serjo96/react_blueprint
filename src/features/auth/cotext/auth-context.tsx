@@ -5,6 +5,7 @@ import {DependencyInjector} from "~/utils/dependencyInjector";
 import {authApi} from "~/services/api/initClient";
 import {CreateUserDto, LoginByEmail} from "~/services/api/open-api";
 import {useLocation, useNavigate} from "react-router-dom";
+import {Tokens} from "~/core/constants";
 
 //TODO add type for user
 
@@ -14,15 +15,9 @@ export interface AuthContextType {
   login: (payloadData: LoginByEmail) => Promise<void>;
   logout: () => void;
   loginWithToken: (token: string) => Promise<void>;
-  refreshAccessToken: () => Promise<void>;
+  refreshAccessToken: () => Promise<string>;
   register: (regPayload: CreateUserDto) => void;
 }
-
-export enum Tokens {
-  ACCESS_TOKEN = 'accessToken',
-  REFRESH_TOKEN = 'refreshToken'
-}
-
 
 export const AuthContext = createContext<AuthContextType>(null);
 
@@ -36,6 +31,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
   useEffect(() => {
     DependencyInjector.injectRefreshTokenMethod(refreshAccessToken);
+    DependencyInjector.injectLogoutMethod(logout);
   }, []);
 
   const refreshAccessToken = async () => {
@@ -47,17 +43,22 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       setRefreshToken(newTokens.refreshToken);
       localStorage.setItem(Tokens.ACCESS_TOKEN, newTokens.accessToken);
       localStorage.setItem(Tokens.REFRESH_TOKEN, newTokens.refreshToken);
+      return newTokens.accessToken;
     } catch (error) {
+      console.log(22);
       logout();
     }
   };
   const login = async (loginPayload: LoginByEmail) => {
     try {
+      console.log(2314);
       const {user, token} = await authApi.authControllerLogin({loginByEmail: loginPayload});
+      console.log(5555);
       localSaveAuthData(user, token)
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
       setUser(user);
+      console.log(location.state.from);
       navigate(location.state.from || '/protected-page');
     } catch (error) {
 
