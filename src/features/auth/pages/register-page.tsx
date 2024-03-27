@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import RegisterForm, {
   RegisterFormSubmitData,
 } from '~/features/auth/copmonents/register-form';
@@ -13,10 +13,16 @@ import { useAuth } from '~/features/auth/cotext/useAuth';
 import { CustomValidationErrorDto } from '~/services/api/open-api';
 
 const RegisterPage = () => {
-  const { register } = useAuth();
+  const { register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/')
+    }
+  }, []);
 
   const handleSubmit = async (formData: RegisterFormSubmitData) => {
     try {

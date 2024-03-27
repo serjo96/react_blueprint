@@ -11,13 +11,21 @@ import {
   TokenValidationErrorDto,
 } from '~/services/api/open-api';
 import { extractErrorData } from '~/utils/extractErrorData';
+import {useAuth} from "~/features/auth/cotext/useAuth";
+import {useNavigate} from "react-router-dom";
 
 const PasswordRecoveryPage = () => {
+  const {isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [error, setError] = useState('');
   const [unlockTime, setUnlockTime] = useState(null);
   const [timer, setTimer] = useState(null);
 
   useEffect(() => {
+      if (isAuthenticated) {
+        navigate('/')
+      }
+
     // Update timer every second
     const interval = setInterval(() => {
       if (unlockTime) {

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import { Avatar, Box, Typography } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
@@ -10,12 +10,16 @@ import { useAuth } from '~/features/auth/cotext/useAuth';
 import { useLoading } from '~/context/LoadingContext';
 
 const LoginPage = () => {
-  const { login, loginWithToken } = useAuth();
+  const { login, loginWithToken, isAuthenticated } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
+    if(isAuthenticated) {
+      navigate('/')
+    }
+
     // Function for Parsing Query URL parameters
     const searchParams = new URLSearchParams(location.search);
     const tempToken = searchParams.get('token');
