@@ -1,16 +1,18 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import {getUserData} from "~/utils/localStorageUtils";
-import {DependencyInjector} from "~/utils/dependencyInjector";
-import {authApi} from "~/services/api/initClient";
-import {CreateUserDto, LoginByEmail} from "~/services/api/open-api";
-import {useLocation, useNavigate} from "react-router-dom";
-import {Tokens} from "~/core/constants";
+import { getUserData } from '~/utils/localStorageUtils';
+import { DependencyInjector } from '~/utils/dependencyInjector';
+import { authApi } from '~/services/api/initClient';
+import { CreateUserDto, LoginByEmail } from '~/services/api/open-api';
+import { Tokens } from '~/core/constants';
+import { AuthContext } from '~/features/auth/cotext/auth-context';
+import { UserDto } from '~/services/api/open-api/models/UserDto';
 
 //TODO add type for user
 
 export interface AuthContextType {
-  user?: {id: string, email: string};
+  user?: UserDto;
   isAuthenticated: boolean;
   login: (payloadData: LoginByEmail) => Promise<void>;
   logout: () => void;
@@ -19,15 +21,16 @@ export interface AuthContextType {
   register: (regPayload: CreateUserDto) => void;
 }
 
-export const AuthContext = createContext<AuthContextType>(null);
-
-export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(getUserData);
-  const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem(Tokens.ACCESS_TOKEN));
-  const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem(Tokens.REFRESH_TOKEN));
-
+  const [accessToken, setAccessToken] = useState<string | null>(
+    localStorage.getItem(Tokens.ACCESS_TOKEN)
+  );
+  const [refreshToken, setRefreshToken] = useState<string | null>(
+    localStorage.getItem(Tokens.REFRESH_TOKEN)
+  );
 
   useEffect(() => {
     DependencyInjector.injectRefreshTokenMethod(refreshAccessToken);
@@ -36,9 +39,11 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
   const refreshAccessToken = async () => {
     try {
-      const newTokens = await authApi.updateAccessToken({refreshTokenDto: {
-          refreshToken
-        }});
+      const newTokens = await authApi.updateAccessToken({
+        refreshTokenDto: {
+          refreshToken,
+        },
+      });
       setAccessToken(newTokens.accessToken);
       setRefreshToken(newTokens.refreshToken);
       localStorage.setItem(Tokens.ACCESS_TOKEN, newTokens.accessToken);
@@ -51,42 +56,38 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
   };
   const login = async (loginPayload: LoginByEmail) => {
     try {
-      console.log(2314);
-      const {user, token} = await authApi.login({loginByEmail: loginPayload});
-      console.log(5555);
-      localSaveAuthData(user, token)
+      const { user, token } = await authApi.login({
+        loginByEmail: loginPayload,
+      });
+      localSaveAuthData(user, token);
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
       setUser(user);
       console.log(location.state.from);
       navigate(location.state.from || '/protected-page');
-    } catch (error) {
-
-    }
+    } catch (error) {}
   };
 
   const loginWithToken = async (tempToken: string) => {
     try {
-      const {user, token} = await authApi.tokenLogin({
-        tempToken
+      const { user, token } = await authApi.tokenLogin({
+        tempToken,
       });
 
-      localSaveAuthData(user, token)
+      localSaveAuthData(user, token);
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
       setUser(user);
       navigate(location.state.from || '/protected-page');
-    } catch (error) {
-
-    }
-  }
+    } catch (error) {}
+  };
 
   const register = async (regPayload: CreateUserDto) => {
-    const {user, token} = await authApi.signUp({
-      createUserDto: regPayload
+    const { user, token } = await authApi.signUp({
+      createUserDto: regPayload,
     });
 
-    localSaveAuthData(user, token)
+    localSaveAuthData(user, token);
     setAccessToken(token.accessToken);
     setRefreshToken(token.refreshToken);
     setUser(user);
@@ -97,7 +98,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
     localStorage.setItem(Tokens.ACCESS_TOKEN, tokens.accessToken);
     localStorage.setItem(Tokens.REFRESH_TOKEN, tokens.refreshToken);
     localStorage.setItem('user', JSON.stringify(user));
-  }
+  };
 
   const logout = async () => {
     try {
@@ -107,15 +108,14 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
       setAccessToken(null);
       setRefreshToken(null);
       setUser(null);
-      navigate('/')
-      await authApi.logout({refreshTokenDto: {
-        refreshToken
-      }})
-    } catch (error) {
-
-    }
+      navigate('/');
+      await authApi.logout({
+        refreshTokenDto: {
+          refreshToken,
+        },
+      });
+    } catch (error) {}
   };
-
 
   const contextValue = {
     user,
@@ -124,8 +124,10 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
     register,
     refreshAccessToken,
     loginWithToken,
-    logout
+    logout,
   };
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 };
