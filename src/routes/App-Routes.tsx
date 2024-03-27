@@ -12,17 +12,19 @@ const AppRoutes = () => {
       <ErrorBoundary fallback={<ErrorPage />}>
         <Routes>
           {routes.map((route, index) =>
-            route.protected ? (
+            (
               <Route
                 key={index}
                 path={route.path}
-                element={<RequireAuth>{route.component()}</RequireAuth>}
-              />
-            ) : (
-              <Route
-                key={index}
-                path={route.path}
-                element={route.component()}
+                element={
+                  route.protected ? (
+                    <RequireAuth>
+                      <route.component /> {/* Используйте component напрямую в JSX */}
+                    </RequireAuth>
+                  ) : (
+                    <route.component /> // Также напрямую в JSX
+                  )
+                }
               />
             )
           )}
