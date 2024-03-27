@@ -14,6 +14,7 @@ import SecurityIcon from '@mui/icons-material/Security';
 import BuildIcon from '@mui/icons-material/Build';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import {Link as RouterLink} from "react-router-dom";
 
 const HomePage = () => {
   return (
@@ -32,8 +33,8 @@ const HomePage = () => {
         </Typography>
         <Typography variant="body1" paragraph>
           Authorized users can access the{' '}
-          <Link href="/calendar">calendar page</Link>, while administrators have
-          exclusive access to the <Link href="/admin-panel">admin panel</Link>.
+          <Link component={RouterLink} to="/protected-page">protected page</Link>, while administrators have
+          exclusive access to the <Link component={RouterLink} to="/admin-panel">admin panel</Link>.
         </Typography>
         <Typography variant="body1" paragraph>
           Jumpstart your React applications with this ready-to-use template,
