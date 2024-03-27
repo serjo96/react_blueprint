@@ -1,6 +1,4 @@
 import {
-  ErrorContext,
-  RequestContext,
   ResponseContext,
 } from '~/services/api/open-api';
 import { DependencyInjector } from '~/utils/dependencyInjector';
