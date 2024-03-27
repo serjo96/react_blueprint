@@ -63,8 +63,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
       setUser(user);
-      console.log(location.state.from);
-      navigate(location.state.from || '/protected-page');
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
     } catch (error) {}
   };
 
