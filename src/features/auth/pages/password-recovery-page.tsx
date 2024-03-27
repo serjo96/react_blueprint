@@ -1,13 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import {Box, Typography} from "@mui/material";
+import React, { useEffect, useState } from 'react';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import { Box, Typography } from '@mui/material';
 
-import PasswordRecoveryForm from "~/features/auth/copmonents/password-recovery-form";
-import {eventEmitter, EventName} from "~/utils/eventEmitter";
-import {NotificationStatus} from "~/components/notification-wrapper";
-import {authApi} from "~/services/api/initClient";
-import {ResponseError, TokenValidationErrorDto} from "~/services/api/open-api";
-import {extractErrorData} from "~/utils/extractErrorData";
+import PasswordRecoveryForm from '~/features/auth/copmonents/password-recovery-form';
+import { eventEmitter, EventName } from '~/utils/eventEmitter';
+import { NotificationStatus } from '~/components/notification-wrapper';
+import { authApi } from '~/services/api/initClient';
+import {
+  ResponseError,
+  TokenValidationErrorDto,
+} from '~/services/api/open-api';
+import { extractErrorData } from '~/utils/extractErrorData';
 
 const PasswordRecoveryPage = () => {
   const [error, setError] = useState('');
@@ -34,24 +37,24 @@ const PasswordRecoveryPage = () => {
     return () => clearInterval(interval);
   }, [unlockTime]);
   const handleSubmit = async (email: string) => {
-      try {
-        await authApi.forgotPassword({email});
+    try {
+      await authApi.forgotPassword({ email });
 
-        eventEmitter.emit(
-          EventName.NOTIFICATION,
-          {
-            message: 'The email with recovery instruction was sent successfully. Check your email.',
-            type: NotificationStatus.SUCCESS
-          });
-      } catch (error) {
-        if(error instanceof ResponseError) {
-          const errorData = await extractErrorData<TokenValidationErrorDto>(error);
-          setError(errorData.message)
-          if(errorData.payload) {
-            setTimer(errorData.payload.unlockTime)
-          }
+      eventEmitter.emit(EventName.NOTIFICATION, {
+        message:
+          'The email with recovery instruction was sent successfully. Check your email.',
+        type: NotificationStatus.SUCCESS,
+      });
+    } catch (error) {
+      if (error instanceof ResponseError) {
+        const errorData =
+          await extractErrorData<TokenValidationErrorDto>(error);
+        setError(errorData.message);
+        if (errorData.payload) {
+          setTimer(errorData.payload.unlockTime);
         }
       }
+    }
   };
   return (
     <Box
@@ -72,6 +75,7 @@ const PasswordRecoveryPage = () => {
         timer={timer}
       />
     </Box>
-  )};
+  );
+};
 
 export default PasswordRecoveryPage;

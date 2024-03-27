@@ -1,5 +1,5 @@
-import {ResponseContext} from "~/services/api/open-api";
-import {ErrorHandler} from "~/services/ErrorHandler";
+import { ResponseContext } from '~/services/api/open-api';
+import { ErrorHandler } from '~/services/ErrorHandler';
 
 export const errorHandlingMiddleware = {
   post: async (context: ResponseContext) => {
@@ -11,5 +11,5 @@ export const errorHandlingMiddleware = {
       returnData = error;
     }
     return returnData;
-  }
+  },
 };

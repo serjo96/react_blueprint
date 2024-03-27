@@ -1,37 +1,38 @@
-import Joi from "joi";
+import Joi from 'joi';
 import React, { useState } from 'react';
-import {Box, Button, TextField} from "@mui/material";
+import { Box, Button, TextField } from '@mui/material';
 
-import {ProfileValidationSchema} from "~/features/profile/validation/profile-validation";
-import {UserDto} from "~/services/api/open-api/models/UserDto";
+import { ProfileValidationSchema } from '~/features/profile/validation/profile-validation';
+import { UserDto } from '~/services/api/open-api/models/UserDto';
 
 type FormErrorsState = {
   email: string;
   name: string;
   [key: string]: string | boolean;
-}
+};
 
 export type FormStateTypes = {
-  name: string,
-  email: string
-}
-
+  name: string;
+  email: string;
+};
 
 type ProfileFormProps = {
   onSubmit: (params: FormStateTypes) => void;
 
-  user?: Partial<UserDto>
+  user?: Partial<UserDto>;
   errors?: {
     email?: string;
     name?: string;
-  }
-}
+  };
+};
 
-const ProfileForm = ({onSubmit, user, errors}: ProfileFormProps) => {
-  const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
+const ProfileForm = ({ onSubmit, user, errors }: ProfileFormProps) => {
+  const [validationErrors, setValidationErrors] = useState<
+    Partial<FormErrorsState>
+  >({});
   const [userData, setUserData] = useState<FormStateTypes>({
-    name: user && user.profile.name || '',
-    email: user && user.email || '',
+    name: (user && user.profile.name) || '',
+    email: (user && user.email) || '',
   });
 
   // Combine validation errors and API errors for display
@@ -48,10 +49,12 @@ const ProfileForm = ({onSubmit, user, errors}: ProfileFormProps) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      setValidationErrors({})
-      errorsFields = null
-      const values = await ProfileValidationSchema.validateAsync(userData, {abortEarly: false});
-      onSubmit(values)
+      setValidationErrors({});
+      errorsFields = null;
+      const values = await ProfileValidationSchema.validateAsync(userData, {
+        abortEarly: false,
+      });
+      onSubmit(values);
     } catch (error) {
       const errorData = error as Joi.ValidationError;
       const errorMessages = errorData.details.reduce((acc, detail) => {
@@ -61,7 +64,7 @@ const ProfileForm = ({onSubmit, user, errors}: ProfileFormProps) => {
       }, {} as FormErrorsState);
       setValidationErrors(errorMessages);
     }
-  }
+  };
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
@@ -92,16 +95,11 @@ const ProfileForm = ({onSubmit, user, errors}: ProfileFormProps) => {
         error={!!errorsFields.email}
         helperText={errorsFields.email}
       />
-      <Button
-        type="submit"
-        fullWidth
-        variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-      >
+      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
         Save changes
       </Button>
     </Box>
-  )
-}
+  );
+};
 
 export default ProfileForm;

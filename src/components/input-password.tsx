@@ -1,20 +1,25 @@
-import {IconButton, InputAdornment, TextField} from "@mui/material";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
-import React, {useState} from "react";
-import {TextFieldProps} from "@mui/material/TextField/TextField";
+import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { TextFieldProps } from '@mui/material/TextField/TextField';
 
 type InputPasswordProps = {
   value: string;
   handleChange: (value: React.ChangeEvent<HTMLInputElement>) => void;
 
-  errors?: string | string[]
-}
-export const InputPassword = ({value, handleChange, errors, ...props}: TextFieldProps & InputPasswordProps) => {
+  errors?: string | string[];
+};
+export const InputPassword = ({
+  value,
+  handleChange,
+  errors,
+  ...props
+}: TextFieldProps & InputPasswordProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
-  }
+  };
 
   return (
     <TextField
@@ -37,5 +42,5 @@ export const InputPassword = ({value, handleChange, errors, ...props}: TextField
         ),
       }}
     />
-  )
-}
+  );
+};

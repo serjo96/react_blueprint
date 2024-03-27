@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
-import {Link as RouterLink} from 'react-router-dom';
-import Joi from "joi";
-import {Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField} from "@mui/material";
+import { Link as RouterLink } from 'react-router-dom';
+import Joi from 'joi';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Link,
+  TextField,
+} from '@mui/material';
 
-import {loginValidationSchema} from "~/features/auth/validation/auth-validation";
-import {InputPassword} from "~/components/input-password";
+import { loginValidationSchema } from '~/features/auth/validation/auth-validation';
+import { InputPassword } from '~/components/input-password';
 
 export type LoginFormMainFields = {
   email: string;
   password: string;
   rememberMe: boolean;
-}
+};
 
 type FormErrorsState = LoginFormMainFields & {
   [key: string]: string | boolean;
@@ -21,16 +29,18 @@ type LoginFormProps = {
   errors?: {
     email?: string;
     password?: string;
-  }
-}
+  };
+};
 
-const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
+const LoginForm = ({ onSubmit, errors }: LoginFormProps) => {
   const [formData, setFormData] = useState<LoginFormMainFields>({
     email: '',
     password: '',
     rememberMe: false,
   });
-  const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
+  const [validationErrors, setValidationErrors] = useState<
+    Partial<FormErrorsState>
+  >({});
 
   // Combine validation errors and API errors for display
   let errorsFields = { ...validationErrors, ...errors };
@@ -38,17 +48,20 @@ const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      setValidationErrors({})
-      errorsFields = null
-      const value: FormErrorsState = await loginValidationSchema.validateAsync(formData, { abortEarly: false });
-      onSubmit(value)
+      setValidationErrors({});
+      errorsFields = null;
+      const value: FormErrorsState = await loginValidationSchema.validateAsync(
+        formData,
+        { abortEarly: false }
+      );
+      onSubmit(value);
     } catch (error) {
       const errorData = errors as Joi.ValidationError;
       const errorMessages = errorData.details.reduce((acc, detail) => {
         const key = detail.path[0] as keyof FormErrorsState;
         acc[key] = detail.message;
         return acc;
-        }, {} as FormErrorsState);
+      }, {} as FormErrorsState);
       setValidationErrors(errorMessages);
     }
   };
@@ -62,7 +75,6 @@ const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
   };
 
   return (
-
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
       <TextField
         margin="normal"
@@ -103,12 +115,7 @@ const LoginForm = ({onSubmit, errors}: LoginFormProps) => {
         }
         label="Remember me"
       />
-      <Button
-        type="submit"
-        fullWidth
-        variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-      >
+      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
         Sign In
       </Button>
       <Grid container>

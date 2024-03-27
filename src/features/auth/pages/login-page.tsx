@@ -1,11 +1,13 @@
-import React, {useEffect} from 'react';
-import {useLocation, useNavigate} from "react-router-dom";
-import {Avatar, Box, Typography} from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Avatar, Box, Typography } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-import LoginForm, {LoginFormMainFields} from '~/features/auth/copmonents/login-form';
-import {useAuth} from "~/features/auth/cotext/useAuth";
-import {useLoading} from "~/context/LoadingContext";
+import LoginForm, {
+  LoginFormMainFields,
+} from '~/features/auth/copmonents/login-form';
+import { useAuth } from '~/features/auth/cotext/useAuth';
+import { useLoading } from '~/context/LoadingContext';
 
 const LoginPage = () => {
   const { login, loginWithToken } = useAuth();
@@ -18,18 +20,17 @@ const LoginPage = () => {
     const searchParams = new URLSearchParams(location.search);
     const tempToken = searchParams.get('token');
 
-    if(tempToken) {
+    if (tempToken) {
       // If there is a temporary token in the URL, we try to authorize the user    if (tempToken) {
       startLoading();
       loginWithToken(tempToken)
         .then(() => {
-            navigate('/protected-page');
-          })
+          navigate('/protected-page');
+        })
         .finally(() => {
           stopLoading();
         });
     }
-
   }, [location.search, navigate]);
 
   const handleSubmit = async (formData: LoginFormMainFields) => {

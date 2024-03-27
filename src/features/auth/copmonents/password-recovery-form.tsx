@@ -1,19 +1,21 @@
-import React, {SyntheticEvent, useState} from 'react';
-import {TextField, Button, Box, Typography} from '@mui/material';
-import Joi from "joi";
+import React, { SyntheticEvent, useState } from 'react';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import Joi from 'joi';
 
-import {resetPasswordValidationSchema} from "~/features/auth/validation/auth-validation";
-import {eventEmitter, EventName} from "~/utils/eventEmitter";
-import {NotificationStatus} from "~/components/notification-wrapper";
-import {useCountdownTimer} from "~/hooks/useCountdownTimer";
+import { resetPasswordValidationSchema } from '~/features/auth/validation/auth-validation';
+import { useCountdownTimer } from '~/hooks/useCountdownTimer';
 
 type RecoveryPasswordFormProps = {
   onSubmit: (email: string) => void;
   timer: number;
   error?: string;
-}
+};
 
-const PasswordRecoveryForm = ({onSubmit, timer, error}: RecoveryPasswordFormProps) => {
+const PasswordRecoveryForm = ({
+  onSubmit,
+  timer,
+  error,
+}: RecoveryPasswordFormProps) => {
   const [email, setEmail] = useState('');
   const [validationError, setValidationError] = useState<string>(error || '');
   const remainingTime = useCountdownTimer(timer);
@@ -21,10 +23,12 @@ const PasswordRecoveryForm = ({onSubmit, timer, error}: RecoveryPasswordFormProp
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     try {
-      setValidationError('')
-      await resetPasswordValidationSchema.validateAsync(email, { abortEarly: false });
+      setValidationError('');
+      await resetPasswordValidationSchema.validateAsync(email, {
+        abortEarly: false,
+      });
 
-      onSubmit(email)
+      onSubmit(email);
     } catch (error) {
       if (error instanceof Joi.ValidationError) {
         setValidationError(error.message);
@@ -44,7 +48,7 @@ const PasswordRecoveryForm = ({onSubmit, timer, error}: RecoveryPasswordFormProp
         autoComplete="email"
         autoFocus
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={e => setEmail(e.target.value)}
         error={!!validationError}
         helperText={validationError}
       />

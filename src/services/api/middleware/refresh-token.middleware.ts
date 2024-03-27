@@ -1,25 +1,29 @@
-import {RequestContext, ResponseContext} from "~/services/api/open-api";
-import {Tokens} from "~/features/auth/cotext/auth-context";
-import {DependencyInjector} from "~/utils/dependencyInjector";
+import {
+  ErrorContext,
+  RequestContext,
+  ResponseContext,
+} from '~/services/api/open-api';
+import { DependencyInjector } from '~/utils/dependencyInjector';
 
 export const refreshTokenMiddleware = {
-  pre: async (context: RequestContext) => {
-    return context;
-  },
   post: async (context: ResponseContext) => {
     if (context.response.status === 403) {
-      // Logic to update the token
-      await DependencyInjector.refreshAccessToken();
-      const token = localStorage.getItem(Tokens.ACCESS_TOKEN);
-      // Re-request with updated token
+      if (DependencyInjector.isRetryAttempt) {
+        return await DependencyInjector.logout();
+      }
+
+      const accessToken = await DependencyInjector.refreshAccessToken();
+      DependencyInjector.changeRetryAttempt(true);
       return context.fetch(context.url, {
         ...context.init,
         headers: {
           ...context.init.headers,
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
+    } else if (context.response.status === 401) {
+      await DependencyInjector.logout();
     }
     return context.response;
-  }
+  },
 };

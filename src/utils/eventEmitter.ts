@@ -10,13 +10,16 @@ class EventEmitter {
 
     return () => {
       const handlers = this.events.get(eventName) || [];
-      this.events.set(eventName, handlers.filter((handler) => handler !== fn));
+      this.events.set(
+        eventName,
+        handlers.filter(handler => handler !== fn)
+      );
     };
   }
 
   emit(eventName: EventName, ...args: any[]): void {
     const handlers = this.events.get(eventName) || [];
-    handlers.forEach((fn) => {
+    handlers.forEach(fn => {
       fn(...args);
     });
   }
@@ -26,6 +29,5 @@ export const eventEmitter = new EventEmitter();
 
 // Add your events
 export enum EventName {
-  NOTIFICATION = 'notification'
+  NOTIFICATION = 'notification',
 }
-

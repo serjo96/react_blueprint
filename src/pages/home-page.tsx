@@ -1,11 +1,19 @@
 import React from 'react';
-import { Container, Typography, Box, Link, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Box,
+  Link,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
 import ComputerIcon from '@mui/icons-material/Computer';
 import SecurityIcon from '@mui/icons-material/Security';
 import BuildIcon from '@mui/icons-material/Build';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
 
 const HomePage = () => {
   return (
@@ -15,13 +23,21 @@ const HomePage = () => {
           🚀 React Template Project
         </Typography>
         <Typography variant="body1" paragraph>
-          This project serves as a template for quickly bootstrapping React applications that require basic state management with the potential for scaling up to more comprehensive state management solutions in the future. It includes essential features such as user authentication and registration, laying the groundwork for building both simple and complex web applications efficiently.
+          This project serves as a template for quickly bootstrapping React
+          applications that require basic state management with the potential
+          for scaling up to more comprehensive state management solutions in the
+          future. It includes essential features such as user authentication and
+          registration, laying the groundwork for building both simple and
+          complex web applications efficiently.
         </Typography>
         <Typography variant="body1" paragraph>
-          Authorized users can access the <Link href="/calendar">calendar page</Link>, while administrators have exclusive access to the <Link href="/admin-panel">admin panel</Link>.
+          Authorized users can access the{' '}
+          <Link href="/calendar">calendar page</Link>, while administrators have
+          exclusive access to the <Link href="/admin-panel">admin panel</Link>.
         </Typography>
         <Typography variant="body1" paragraph>
-          Jumpstart your React applications with this ready-to-use template, featuring:
+          Jumpstart your React applications with this ready-to-use template,
+          featuring:
         </Typography>
         <List>
           <ListItem>
@@ -56,16 +72,22 @@ const HomePage = () => {
           </ListItem>
         </List>
         <Typography variant="body1" paragraph>
-          Extend your project with a full-stack solution using a complementary backend template:
+          Extend your project with a full-stack solution using a complementary
+          backend template:
         </Typography>
         <Typography variant="body1">
           🔗 Backend:
-          <Link href="https://github.com/serjo96/nestjs-backend_blueprint" target="_blank" rel="noopener">
+          <Link
+            href="https://github.com/serjo96/nestjs-backend_blueprint"
+            target="_blank"
+            rel="noopener"
+          >
             Nest.js + TypeORM + PostgreSQL
           </Link>
         </Typography>
         <Typography variant="body1" paragraph>
-          This synergy ensures a seamless development journey from start to finish. 🌟
+          This synergy ensures a seamless development journey from start to
+          finish. 🌟
         </Typography>
       </Box>
     </Container>

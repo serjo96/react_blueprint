@@ -1,55 +1,68 @@
-import {Box, Button, Grid, IconButton, InputAdornment, TextField} from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  TextField,
+} from '@mui/material';
 import React, { SyntheticEvent, useState } from 'react';
-import {Link} from "react-router-dom";
-import Joi from "joi";
+import { Link } from 'react-router-dom';
+import Joi from 'joi';
 
-import {registrationValidationSchema} from "~/features/auth/validation/auth-validation";
-import {InputPassword} from "~/components/input-password";
+import { registrationValidationSchema } from '~/features/auth/validation/auth-validation';
+import { InputPassword } from '~/components/input-password';
 
 export type RegisterFormMainFields = {
   email: string;
   password: string;
   confirmPassword: string;
-}
+};
 
-export type RegisterFormSubmitData = Omit<RegisterFormMainFields, 'confirmPassword'>
+export type RegisterFormSubmitData = Omit<
+  RegisterFormMainFields,
+  'confirmPassword'
+>;
 
 type FormErrorsState = RegisterFormMainFields & {
   [key: string]: string | boolean;
-}
+};
 
 type RegisterFormProps = {
   onSubmit: (params: RegisterFormSubmitData) => void;
   errors?: {
     email?: string;
     password?: string;
-  }
-}
+  };
+};
 
-const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
+const RegistrationForm = ({ onSubmit, errors }: RegisterFormProps) => {
   const [formData, setFormData] = useState({
     password: '',
     confirmPassword: '',
-    email: ''
+    email: '',
   });
-  const [validationErrors, setValidationErrors] = useState<Partial<FormErrorsState>>({});
+  const [validationErrors, setValidationErrors] = useState<
+    Partial<FormErrorsState>
+  >({});
   // Combine validation errors and API errors for display
   let errorsFields = { ...validationErrors, ...errors };
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     try {
-      setValidationErrors({})
-      errorsFields = null
-      const {confirmPassword, ...values}: FormErrorsState = await registrationValidationSchema.validateAsync(formData, { abortEarly: false });
-      onSubmit(values)
+      setValidationErrors({});
+      errorsFields = null;
+      const { confirmPassword, ...values }: FormErrorsState =
+        await registrationValidationSchema.validateAsync(formData, {
+          abortEarly: false,
+        });
+      onSubmit(values);
     } catch (error) {
       const errorData = error as Joi.ValidationError;
       const errorMessages = errorData.details.reduce((acc, detail) => {
         const key = detail.path[0] as keyof FormErrorsState;
         acc[key] = detail.message;
         return acc;
-        }, {} as FormErrorsState);
+      }, {} as FormErrorsState);
       setValidationErrors(errorMessages);
     }
   };
@@ -61,7 +74,6 @@ const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
       [name]: value,
     });
   };
-
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
@@ -95,37 +107,30 @@ const RegistrationForm = ({onSubmit, errors}: RegisterFormProps) => {
             handleChange={handleChange}
             errors={errorsFields.password}
           />
-            </Grid>
-            <Grid item xs={12}>
-              <InputPassword
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm password"
-                id="confirmPassword"
-                value={formData.confirmPassword}
-                handleChange={handleChange}
-                errors={errorsFields.confirmPassword}
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
+        </Grid>
+        <Grid item xs={12}>
+          <InputPassword
+            margin="normal"
+            required
             fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign Up
-          </Button>
-          <Grid container justifyContent="flex-end">
-            <Grid item>
-              <Link to={'/sign-in'}>
-                Already have an account? Sign in
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
+            name="confirmPassword"
+            label="Confirm password"
+            id="confirmPassword"
+            value={formData.confirmPassword}
+            handleChange={handleChange}
+            errors={errorsFields.confirmPassword}
+          />
+        </Grid>
+      </Grid>
+      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+        Sign Up
+      </Button>
+      <Grid container justifyContent="flex-end">
+        <Grid item>
+          <Link to={'/sign-in'}>Already have an account? Sign in</Link>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

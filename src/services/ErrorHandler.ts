@@ -1,5 +1,5 @@
-import {eventEmitter, EventName} from "~/utils/eventEmitter";
-import {NotificationStatus} from "~/components/notification-wrapper";
+import { eventEmitter, EventName } from '~/utils/eventEmitter';
+import { NotificationStatus } from '~/components/notification-wrapper';
 
 export class ErrorHandler {
   static logError(error: unknown) {
@@ -8,10 +8,13 @@ export class ErrorHandler {
   }
 
   static showErrorToUser(message?: string) {
-    eventEmitter.emit(EventName.NOTIFICATION, { message: message || 'An error has occurred', type: NotificationStatus.ERROR });
+    eventEmitter.emit(EventName.NOTIFICATION, {
+      message: message || 'An error has occurred',
+      type: NotificationStatus.ERROR,
+    });
   }
 
-  static handle(error: {message: string}) {
+  static handle(error: { message: string }) {
     this.logError(error);
     this.showErrorToUser(error?.message);
   }

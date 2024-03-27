@@ -1,18 +1,18 @@
 // themeContext.js
 import React, { createContext, useContext, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {CssBaseline, PaletteMode} from '@mui/material';
+import { CssBaseline, PaletteMode } from '@mui/material';
 
 type ThemeContextType = {
-  toggleTheme: () => void,
-  mode: PaletteMode
-}
+  toggleTheme: () => void;
+  mode: PaletteMode;
+};
 
 const ThemeContext = createContext<ThemeContextType>(null);
 
 export const useThemeContext = () => useContext(ThemeContext);
 
-const CustomThemeProvider = ({ children }: {children: React.ReactNode}) => {
+const CustomThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [mode, setMode] = useState<PaletteMode>('dark');
 
   const theme = createTheme({
@@ -22,7 +22,7 @@ const CustomThemeProvider = ({ children }: {children: React.ReactNode}) => {
   });
 
   const toggleTheme = () => {
-    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+    setMode(prevMode => (prevMode === 'light' ? 'dark' : 'light'));
   };
 
   return (

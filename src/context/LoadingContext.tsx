@@ -1,4 +1,10 @@
-import React, {createContext, ReactNode, useCallback, useContext, useState} from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 interface LoadingContextState {
   isLoading: boolean;
   startLoading: () => void;
@@ -15,7 +21,7 @@ const LoadingContext = createContext<LoadingContextState>({
   },
 });
 
-export const LoadingProvider = ({ children }: {children: ReactNode;}) => {
+export const LoadingProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const startLoading = useCallback(() => {
     setIsLoading(true);

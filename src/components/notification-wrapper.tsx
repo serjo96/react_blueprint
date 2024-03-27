@@ -1,23 +1,23 @@
-import React, {ReactNode, useEffect, useState} from 'react';
-import {Alert, Snackbar} from '@mui/material';
-import {eventEmitter, EventName} from "~/utils/eventEmitter";
+import React, { ReactNode, useEffect, useState } from 'react';
+import { Alert, Snackbar } from '@mui/material';
+import { eventEmitter, EventName } from '~/utils/eventEmitter';
 
 export enum NotificationStatus {
   SUCCESS = 'success',
   INFO = 'info',
   WARRING = 'warning',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 type NotificationData = {
   message: string;
   type: NotificationStatus;
 };
-const NotificationWrapper = ({ children }: {children: ReactNode}) => {
+const NotificationWrapper = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const [notification, setNotification] = useState<NotificationData>({
     type: NotificationStatus.INFO,
-    message: ''
+    message: '',
   });
 
   useEffect(() => {
@@ -27,7 +27,10 @@ const NotificationWrapper = ({ children }: {children: ReactNode}) => {
     };
 
     // Subscribe to the notification event
-    const unsubscribe = eventEmitter.subscribe(EventName.NOTIFICATION, showNotification);
+    const unsubscribe = eventEmitter.subscribe(
+      EventName.NOTIFICATION,
+      showNotification
+    );
 
     return () => {
       // Unsubscribe from the event when the component is unmounted
@@ -35,7 +38,10 @@ const NotificationWrapper = ({ children }: {children: ReactNode}) => {
     };
   }, []);
 
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string)  => {
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -49,9 +55,13 @@ const NotificationWrapper = ({ children }: {children: ReactNode}) => {
         open={open}
         autoHideDuration={6000}
         onClose={handleClose}
-        sx={{cursor: 'pointer'}}
+        sx={{ cursor: 'pointer' }}
       >
-        <Alert onClick={handleClose} severity={notification.type || "info"} sx={{ width: '100%' }}>
+        <Alert
+          onClick={handleClose}
+          severity={notification.type || 'info'}
+          sx={{ width: '100%' }}
+        >
           {notification.message}
         </Alert>
       </Snackbar>

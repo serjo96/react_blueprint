@@ -23,7 +23,9 @@ export const useCountdownTimer = (targetUnixTime: number) => {
       if (diffSeconds > 0) {
         const minutes = Math.floor(diffSeconds / 60);
         const seconds = diffSeconds % 60;
-        setRemainingTime(`${minutes > 0 ? `${minutes} min ` : ''}${seconds} sec`);
+        setRemainingTime(
+          `${minutes > 0 ? `${minutes} min ` : ''}${seconds} sec`
+        );
       } else {
         setRemainingTime('');
       }

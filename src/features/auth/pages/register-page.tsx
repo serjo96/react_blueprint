@@ -1,14 +1,16 @@
-import React, {useState} from 'react';
-import RegisterForm, {RegisterFormSubmitData} from '~/features/auth/copmonents/register-form';
-import {Avatar, Box, Typography} from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import {useNavigate} from "react-router-dom";
+import React, { useState } from 'react';
+import RegisterForm, {
+  RegisterFormSubmitData,
+} from '~/features/auth/copmonents/register-form';
+import { Avatar, Box, Typography } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useNavigate } from 'react-router-dom';
 
-import {eventEmitter, EventName} from "~/utils/eventEmitter";
-import {NotificationStatus} from "~/components/notification-wrapper";
-import {useLoading} from "~/context/LoadingContext";
-import {useAuth} from "~/features/auth/cotext/useAuth";
-import {CustomValidationErrorDto} from "~/services/api/open-api";
+import { eventEmitter, EventName } from '~/utils/eventEmitter';
+import { NotificationStatus } from '~/components/notification-wrapper';
+import { useLoading } from '~/context/LoadingContext';
+import { useAuth } from '~/features/auth/cotext/useAuth';
+import { CustomValidationErrorDto } from '~/services/api/open-api';
 
 const RegisterPage = () => {
   const { register } = useAuth();
@@ -19,19 +21,17 @@ const RegisterPage = () => {
   const handleSubmit = async (formData: RegisterFormSubmitData) => {
     try {
       startLoading();
-      setErrors({})
+      setErrors({});
       await register(formData);
 
-      eventEmitter.emit(
-        EventName.NOTIFICATION,
-        {
-          message: 'The email with confirm registration was sent on your mail.',
-          type: NotificationStatus.SUCCESS
-        });
+      eventEmitter.emit(EventName.NOTIFICATION, {
+        message: 'The email with confirm registration was sent on your mail.',
+        type: NotificationStatus.SUCCESS,
+      });
     } catch (error) {
-      const responseErrors = error.response as CustomValidationErrorDto
-      if(responseErrors.errors) {
-        setErrors(responseErrors.errors)
+      const responseErrors = error.response as CustomValidationErrorDto;
+      if (responseErrors.errors) {
+        setErrors(responseErrors.errors);
       }
     } finally {
       stopLoading();
@@ -53,7 +53,7 @@ const RegisterPage = () => {
       <Typography component="h1" variant="h5">
         Sign up
       </Typography>
-      <RegisterForm onSubmit={handleSubmit} errors={errors}/>
+      <RegisterForm onSubmit={handleSubmit} errors={errors} />
     </Box>
   );
 };

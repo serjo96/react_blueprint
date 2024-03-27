@@ -1,25 +1,27 @@
-import React, {useEffect, useState} from 'react';
-import {Typography, Container} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Typography, Container } from '@mui/material';
 
-import ProfileForm, {FormStateTypes} from "~/features/profile/componnets/profile-form";
-import {useAuth} from "~/features/auth/cotext/useAuth";
-import {useLoading} from "~/context/LoadingContext";
-import {usersApi} from "~/services/api/initClient";
-import {ProfileValidationSchema} from "~/features/profile/validation/profile-validation";
-import {CustomValidationErrorDto} from "~/services/api/open-api";
+import ProfileForm, {
+  FormStateTypes,
+} from '~/features/profile/componnets/profile-form';
+import { useAuth } from '~/features/auth/cotext/useAuth';
+import { useLoading } from '~/context/LoadingContext';
+import { usersApi } from '~/services/api/initClient';
+import { ProfileValidationSchema } from '~/features/profile/validation/profile-validation';
+import { CustomValidationErrorDto } from '~/services/api/open-api';
 
 const ProfilePage = () => {
   const { user } = useAuth();
   const [errors, setErrors] = useState({});
-  const { startLoading,stopLoading } = useLoading();
-   const [userData, setUserData] = useState({
-    email: user && user.email || '',
+  const { startLoading, stopLoading } = useLoading();
+  const [userData, setUserData] = useState({
+    email: (user && user.email) || '',
   });
 
-  useEffect(
+  /* useEffect(
     () => {
       const fetchUserProfile = async () => {
-        if (user.id) {
+        if (user && user.id) {
           try {
             startLoading();
             const data = await usersApi.getUserProfile({id: user.id});
@@ -34,41 +36,37 @@ const ProfilePage = () => {
       };
 
       fetchUserProfile();
-    }, [user]);
-
+    }, [user]);*/
 
   const handleSubmit = async (data: FormStateTypes) => {
     try {
-      await ProfileValidationSchema.validateAsync(userData, {abortEarly: false});
+      await ProfileValidationSchema.validateAsync(userData, {
+        abortEarly: false,
+      });
       const updatedUser = await usersApi.editUser({
         id: user.id,
-        updateUserBodyDto: data
-      })
+        updateUserBodyDto: data,
+      });
       setUserData({
         ...userData,
-        ...updatedUser
-      })
+        ...updatedUser,
+      });
     } catch (error) {
-      const responseErrors = error.response as CustomValidationErrorDto
-      if(responseErrors.errors) {
-        setErrors(responseErrors.errors)
+      const responseErrors = error.response as CustomValidationErrorDto;
+      if (responseErrors.errors) {
+        setErrors(responseErrors.errors);
       }
     } finally {
       stopLoading();
     }
-  }
-
+  };
 
   return (
     <Container component="main" maxWidth="sm">
       <Typography component="h1" variant="h5">
         Profile page
       </Typography>
-      <ProfileForm
-        onSubmit={handleSubmit}
-        user={userData}
-        errors={errors}
-      />
+      <ProfileForm onSubmit={handleSubmit} user={userData} errors={errors} />
     </Container>
   );
 };
