@@ -36,11 +36,6 @@ const routes = [
     protected: false,
   },
   {
-    path: '/register',
-    component: RegisterPage,
-    protected: false,
-  },
-  {
     path: '/profile',
     component: ProfilePage,
     protected: true,

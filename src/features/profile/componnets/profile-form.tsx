@@ -31,7 +31,7 @@ const ProfileForm = ({ onSubmit, user, errors }: ProfileFormProps) => {
     Partial<FormErrorsState>
   >({});
   const [userData, setUserData] = useState<FormStateTypes>({
-    name: (user && user.profile.name) || '',
+    name: (user && user.profile?.name) || '',
     email: (user && user.email) || '',
   });
 
@@ -73,7 +73,7 @@ const ProfileForm = ({ onSubmit, user, errors }: ProfileFormProps) => {
         required
         fullWidth
         id="name"
-        label="Имя"
+        label="Name"
         name="name"
         autoComplete="name"
         autoFocus
