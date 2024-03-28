@@ -8,8 +8,6 @@ import {CreateUserDto, LoginByEmail, UserResponseDto} from '~/services/api/open-
 import { Tokens } from '~/core/constants';
 import { AuthContext } from '~/features/auth/cotext/auth-context';
 
-//TODO add type for user
-
 export interface AuthContextType {
   user?: UserResponseDto;
   isAuthenticated: boolean;
