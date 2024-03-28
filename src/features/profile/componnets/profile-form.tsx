@@ -3,26 +3,26 @@ import React, { useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
 
 import { ProfileValidationSchema } from '~/features/profile/validation/profile-validation';
-import { UserDto } from '~/services/api/open-api/models/UserDto';
+import {UserResponseDto} from "~/services/api/open-api";
 
 type FormErrorsState = {
   email: string;
-  name: string;
+  nickname: string;
   [key: string]: string | boolean;
 };
 
 export type FormStateTypes = {
-  name: string;
+  nickname: string;
   email: string;
 };
 
 type ProfileFormProps = {
   onSubmit: (params: FormStateTypes) => void;
 
-  user?: Partial<UserDto>;
+  user?: Partial<UserResponseDto>;
   errors?: {
     email?: string;
-    name?: string;
+    nickname?: string;
   };
 };
 
@@ -31,7 +31,7 @@ const ProfileForm = ({ onSubmit, user, errors }: ProfileFormProps) => {
     Partial<FormErrorsState>
   >({});
   const [userData, setUserData] = useState<FormStateTypes>({
-    name: (user && user.profile?.name) || '',
+    nickname: (user && user.nickname) || '',
     email: (user && user.email) || '',
   });
 
@@ -48,22 +48,24 @@ const ProfileForm = ({ onSubmit, user, errors }: ProfileFormProps) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      setValidationErrors({});
-      errorsFields = null;
-      const values = await ProfileValidationSchema.validateAsync(userData, {
-        abortEarly: false,
-      });
-      onSubmit(values);
-    } catch (error) {
+    setValidationErrors({});
+    errorsFields = null;
+    const {error, value} = await ProfileValidationSchema.validate(userData, {
+      abortEarly: false,
+    });
+
+    if(error) {
       const errorData = error as Joi.ValidationError;
       const errorMessages = errorData.details.reduce((acc, detail) => {
         const key = detail.path[0] as keyof FormErrorsState;
         acc[key] = detail.message;
         return acc;
-      }, {} as FormErrorsState);
+        }, {} as FormErrorsState);
       setValidationErrors(errorMessages);
+    } else {
+      onSubmit(value);
     }
+
   };
 
   return (
@@ -72,15 +74,15 @@ const ProfileForm = ({ onSubmit, user, errors }: ProfileFormProps) => {
         margin="normal"
         required
         fullWidth
-        id="name"
-        label="Name"
-        name="name"
-        autoComplete="name"
+        id="nickname"
+        label="nickname"
+        name="nickname"
+        autoComplete="nickname"
         autoFocus
-        value={userData.name}
+        value={userData.nickname}
         onChange={handleChange}
-        error={!!errorsFields.name}
-        helperText={errorsFields.name}
+        error={!!errorsFields.nickname}
+        helperText={errorsFields.nickname}
       />
       <TextField
         margin="normal"

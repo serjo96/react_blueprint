@@ -4,15 +4,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getUserData } from '~/utils/localStorageUtils';
 import { DependencyInjector } from '~/utils/dependencyInjector';
 import { authApi } from '~/services/api/initClient';
-import { CreateUserDto, LoginByEmail } from '~/services/api/open-api';
+import {CreateUserDto, LoginByEmail, UserResponseDto} from '~/services/api/open-api';
 import { Tokens } from '~/core/constants';
 import { AuthContext } from '~/features/auth/cotext/auth-context';
-import { UserDto } from '~/services/api/open-api/models/UserDto';
 
 //TODO add type for user
 
 export interface AuthContextType {
-  user?: UserDto;
+  user?: UserResponseDto;
   isAuthenticated: boolean;
   login: (payloadData: LoginByEmail) => Promise<void>;
   logout: () => void;

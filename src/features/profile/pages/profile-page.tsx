@@ -7,15 +7,13 @@ import ProfileForm, {
 import { useAuth } from '~/features/auth/cotext/useAuth';
 import { useLoading } from '~/context/LoadingContext';
 import { usersApi } from '~/services/api/initClient';
-import { ProfileValidationSchema } from '~/features/profile/validation/profile-validation';
-import { CustomValidationErrorDto } from '~/services/api/open-api';
-import {UserDto} from "~/services/api/open-api/models/UserDto";
+import {CustomValidationErrorDto, UserResponseDto} from '~/services/api/open-api';
 
 const ProfilePage = () => {
   const { user } = useAuth();
   const [errors, setErrors] = useState({});
   const { startLoading, stopLoading } = useLoading();
-  const [userData, setUserData] = useState<Partial<UserDto>>({
+  const [userData, setUserData] = useState<Partial<UserResponseDto>>({
     email: (user && user.email) || '',
   });
 
@@ -43,9 +41,6 @@ const ProfilePage = () => {
 
   const handleSubmit = async (data: FormStateTypes) => {
     try {
-      await ProfileValidationSchema.validateAsync(userData, {
-        abortEarly: false,
-      });
       const updatedUser = await usersApi.editUser({
         id: user.id,
         updateUserBodyDto: data,
@@ -55,6 +50,7 @@ const ProfilePage = () => {
         ...updatedUser,
       });
     } catch (error) {
+      console.log(error);
       const responseErrors = error.response as CustomValidationErrorDto;
       if (responseErrors.errors) {
         setErrors(responseErrors.errors);

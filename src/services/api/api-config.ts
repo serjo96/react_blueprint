@@ -4,6 +4,7 @@ import { errorHandlingMiddleware } from '~/services/api/middleware/error-handlin
 import { Tokens } from '~/core/constants';
 import config from '~/core/config';
 
+console.log(localStorage.getItem(Tokens.ACCESS_TOKEN));
 export default new Configuration({
   basePath: config.apiUrl,
   accessToken: localStorage.getItem(Tokens.ACCESS_TOKEN) || '',
