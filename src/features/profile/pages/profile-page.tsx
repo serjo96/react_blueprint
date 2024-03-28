@@ -9,26 +9,29 @@ import { useLoading } from '~/context/LoadingContext';
 import { usersApi } from '~/services/api/initClient';
 import { ProfileValidationSchema } from '~/features/profile/validation/profile-validation';
 import { CustomValidationErrorDto } from '~/services/api/open-api';
+import {UserDto} from "~/services/api/open-api/models/UserDto";
 
 const ProfilePage = () => {
   const { user } = useAuth();
   const [errors, setErrors] = useState({});
   const { startLoading, stopLoading } = useLoading();
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<Partial<UserDto>>({
     email: (user && user.email) || '',
   });
 
-  /* useEffect(
+   useEffect(
     () => {
       const fetchUserProfile = async () => {
         if (user && user.id) {
           try {
             startLoading();
-            const data = await usersApi.getUserProfile({id: user.id});
+            const data = await usersApi.getCurrentUser();
             setUserData({
               ...userData,
               ...data
             })
+          } catch (error) {
+
           } finally {
             stopLoading()
           }
@@ -36,7 +39,7 @@ const ProfilePage = () => {
       };
 
       fetchUserProfile();
-    }, [user]);*/
+    }, [user]);
 
   const handleSubmit = async (data: FormStateTypes) => {
     try {
@@ -66,7 +69,11 @@ const ProfilePage = () => {
       <Typography component="h1" variant="h5">
         Profile page
       </Typography>
-      <ProfileForm onSubmit={handleSubmit} user={userData} errors={errors} />
+      <ProfileForm
+        onSubmit={handleSubmit}
+        user={userData}
+        errors={errors}
+      />
     </Container>
   );
 };
